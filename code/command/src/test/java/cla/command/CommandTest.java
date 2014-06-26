@@ -10,7 +10,7 @@ public class CommandTest {
 
 	private Env env;
 
-	@Test public void plus() {
+	@Test public void addCarrot() {
 		Command addCarrot = Commands.addCarrot(); 
 		addCarrot.execute(env);
 		assertEquals(

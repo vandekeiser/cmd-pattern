@@ -1,23 +1,29 @@
 package cla.command;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import cla.domain.carrots.Carrot;
 
 public class TestEnv implements Env {
 
-	@Override
-	public Carrots carrots() {
-		return new TestCarrots();
+	private final Carrots carrots = new TestCarrots();
+	
+	@Override public Carrots carrots() {
+		return carrots;
 	}
 
 	//--------test impls VVVVVVVVV
 	public class TestCarrots implements Carrots {
 
+		Set<Carrot> carrots = new HashSet<>();
+		
 		@Override public void addCarrot(Carrot carrot) {
-			
+			carrots.add(carrot);
 		}
 
 		@Override public int numberOfCarrots() {
-			return 0;
+			return carrots.size();
 		}
 
 	}
