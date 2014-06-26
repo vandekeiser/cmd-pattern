@@ -1,0 +1,11 @@
+.classpath
+.project
+code/command/.settings/*
+bin/*
+*.7z
+*/.idea/*
+code/command/target/**
+*.iml
+.metadata/*
+
+workspace/*
