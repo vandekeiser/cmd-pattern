@@ -14,7 +14,7 @@ public class TestEnv implements Env {
 	}
 
 	//--------test impls VVVVVVVVV
-	public class TestCarrots implements Carrots {
+	class TestCarrots implements Carrots {
 
 		Set<Carrot> carrots = new HashSet<>();
 		

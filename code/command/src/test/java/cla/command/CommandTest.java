@@ -18,6 +18,15 @@ public class CommandTest {
 				env.carrots().numberOfCarrots()
 		);
 	}
+	
+	@Test public void macro() {
+		Command addCarrot = Commands.addCarrot(); 
+		addCarrot.execute(env);
+		assertEquals(
+				1, 
+				env.carrots().numberOfCarrots()
+		);
+	}
 
 	
 	//--------setup/teardown VVVVVVVVV
