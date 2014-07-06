@@ -1,8 +1,10 @@
-package cla.command;
+package cla.command.undo.stack;
 
 import java.util.LinkedList;
 
-public class CommandStack {
+import cla.command.Command;
+
+class CommandStack {
 
 	//La delegation permet de n'exposer que push et pop
 	private final LinkedList<Command> stack = new LinkedList<>();

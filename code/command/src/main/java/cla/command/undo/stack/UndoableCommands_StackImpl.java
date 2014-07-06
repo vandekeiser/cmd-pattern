@@ -1,4 +1,8 @@
-package cla.command;
+package cla.command.undo.stack;
+
+import cla.command.Command;
+import cla.command.env.Env;
+import cla.command.undo.UndoableCommands;
 
 public class UndoableCommands_StackImpl implements UndoableCommands {
 

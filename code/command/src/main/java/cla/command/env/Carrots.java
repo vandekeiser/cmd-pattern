@@ -1,4 +1,4 @@
-package cla.command;
+package cla.command.env;
 
 import cla.domain.carrots.Carrot;
 

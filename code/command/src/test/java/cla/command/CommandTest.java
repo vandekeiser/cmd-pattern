@@ -1,10 +1,14 @@
 package cla.command;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import cla.command.env.Env;
+import cla.command.undo.UndoableCommands;
+import cla.command.undo.stack.UndoableCommands_StackImpl;
 
 public class CommandTest {
 
