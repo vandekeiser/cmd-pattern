@@ -1,6 +1,7 @@
 package cla.command.undo.compensation;
 
-import cla.command.env.Env;
+import cla.domain.Env;
+
 
 public class SequenceOfCommands_CompensationImpl {
 

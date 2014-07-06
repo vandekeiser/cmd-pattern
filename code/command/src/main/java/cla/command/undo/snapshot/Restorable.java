@@ -1,7 +1,10 @@
 package cla.command.undo.snapshot;
 
+import cla.domain.Env;
+
+
 public interface Restorable {
 	
-	void restore();
+	void restore(Env env);
 	
 }

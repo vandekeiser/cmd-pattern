@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import cla.command.BaseCommandTest;
 import cla.command.CommandFactory;
-import cla.command.undo.snapshot.SequenceOfCommands_SnapshotImpl;
 
 public class CommandUndoTest_Snapshot extends BaseCommandTest {
 

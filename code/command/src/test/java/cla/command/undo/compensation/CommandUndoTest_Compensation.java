@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import cla.command.BaseCommandTest;
 import cla.command.CommandFactory;
-import cla.command.undo.compensation.SequenceOfCommands_CompensationImpl;
 
 public class CommandUndoTest_Compensation extends BaseCommandTest {
 
