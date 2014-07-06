@@ -13,7 +13,7 @@ public class CommandUndoTest_Snapshot extends BaseCommandTest {
 	@Test public void undo() {
 		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
 		
-		commands.ddo(CommandFactory.addCarrot());
+		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
 		
 		commands.undo();
@@ -23,7 +23,7 @@ public class CommandUndoTest_Snapshot extends BaseCommandTest {
 	@Test public void redo() {
 		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
 		
-		commands.ddo(CommandFactory.addCarrot());
+		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
 		
 		commands.undo();
@@ -36,7 +36,7 @@ public class CommandUndoTest_Snapshot extends BaseCommandTest {
 	@Test @Ignore public void redo_undo() {
 		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
 		
-		commands.ddo(CommandFactory.addCarrot());
+		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
 		
 		commands.undo();

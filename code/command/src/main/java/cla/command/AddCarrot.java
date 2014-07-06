@@ -25,6 +25,7 @@ public class AddCarrot implements CompensableCommand, SnapshotableCommand {
 	@Override public Restorable snapshot(Env env) {
 		//allCarrots() guarantees it does a defensive copy, otherwise we would have to do a defensive copy here
 		Set<Carrot> snapshot =  env.carrots().getAllCarrots();
+		System.out.println("AddCarrot/snapshot: " + snapshot);
 		return (Env e) -> {e.carrots().setAllCarrots(snapshot);};
 	}
 	

@@ -14,30 +14,36 @@ public class SequenceOfCommands_SnapshotImpl {
 		this.redoStack = new SnapshotStack();
 	}
 
-	public void ddo(SnapshotableCommand todo) {
-		Restorable snapshot = todo.snapshot(env);
+	public void exec(SnapshotableCommand todo) {
+		System.out.println("SequenceOfCommands_SnapshotImpl/exec/START");
+		
+		Restorable snapshotBefore = todo.snapshot(env);
 		todo.execute(this.env);
-		undoStack.push(snapshot);
+		Restorable snapshotAfter = todo.snapshot(env);
+		
+		undoStack.push(snapshotBefore);
+		redoStack.push(snapshotAfter);
 	}
 
 	public void undo() {
+		System.out.println("SequenceOfCommands_SnapshotImpl/undo/START");
 		Restorable lastSnapshot = undoStack.pop();
 		if(lastSnapshot==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas) 
+		
 		lastSnapshot.restore(env);
 		
 		//XXX nommage
-		Restorable lastUndone = lastSnapshot;//La commande qui était la derniere executee est desormais la derniere annulee
-		redoStack.push(lastUndone);
+		redoStack.push(lastSnapshot);
 	}
 
 	public void redo() {
-		Restorable lastUndone = redoStack.pop();
-		if(lastUndone==null) return; 
-		lastUndone.restore(env);
+		System.out.println("SequenceOfCommands_SnapshotImpl/redo/START");
+		Restorable lastSnapshot = redoStack.pop();
+		if(lastSnapshot==null) return; 
+		lastSnapshot.restore(env);
 		
 		//XXX nommage
-		Restorable lastDone = lastUndone;//La commande qui était la derniere annulee est desormais la derniere executee
-		undoStack.push(lastDone);
+		undoStack.push(lastSnapshot);
 	}
 
 	
