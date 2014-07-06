@@ -1,10 +1,9 @@
-package cla.command.undo.stack;
+package cla.command.undo.compensation;
 
 import cla.command.Command;
 import cla.command.env.Env;
-import cla.command.undo.SequenceOfCommands;
 
-public class SequenceOfCommands_CompensationImpl implements SequenceOfCommands {
+public class SequenceOfCommands_CompensationImpl {
 
 	private final Env env;
 	private final CommandStack undoStack, redoStack;
@@ -15,12 +14,12 @@ public class SequenceOfCommands_CompensationImpl implements SequenceOfCommands {
 		this.redoStack = new CommandStack();
 	}
 
-	@Override public void ddo(Command todo) {
+	public void ddo(Command todo) {
 		todo.execute(this.env);
 		undoStack.push(todo);
 	}
 
-	@Override public void undo() {
+	public void undo() {
 		Command lastDone = undoStack.pop();
 		if(lastDone==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas) 
 		lastDone.undo(env);
@@ -29,7 +28,7 @@ public class SequenceOfCommands_CompensationImpl implements SequenceOfCommands {
 		redoStack.push(lastUndone);
 	}
 
-	@Override public void redo() {
+	public void redo() {
 		Command lastUndone = redoStack.pop();
 		if(lastUndone==null) return; 
 		lastUndone.execute(env);

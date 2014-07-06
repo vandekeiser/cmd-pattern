@@ -1,4 +1,4 @@
-package cla.command.undo.stack;
+package cla.command.undo.compensation;
 
 import java.util.LinkedList;
 

@@ -4,13 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import cla.command.undo.SequenceOfCommands;
-import cla.command.undo.stack.SequenceOfCommands_CompensationImpl;
+import cla.command.undo.compensation.SequenceOfCommands_CompensationImpl;
 
-public class CommandTest extends BaseCommandTest {
+public class CommandUndoTest_Compensation extends BaseCommandTest {
 
 	@Test public void undo() {
-		SequenceOfCommands commands = new SequenceOfCommands_CompensationImpl(env);
+		SequenceOfCommands_CompensationImpl commands = new SequenceOfCommands_CompensationImpl(env);
 		
 		commands.ddo(Commands.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -20,7 +19,7 @@ public class CommandTest extends BaseCommandTest {
 	}
 	
 	@Test public void redo() {
-		SequenceOfCommands commands = new SequenceOfCommands_CompensationImpl(env);
+		SequenceOfCommands_CompensationImpl commands = new SequenceOfCommands_CompensationImpl(env);
 		
 		commands.ddo(Commands.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -33,7 +32,7 @@ public class CommandTest extends BaseCommandTest {
 	}
 	
 	@Test public void redo_undo() {
-		SequenceOfCommands commands = new SequenceOfCommands_CompensationImpl(env);
+		SequenceOfCommands_CompensationImpl commands = new SequenceOfCommands_CompensationImpl(env);
 		
 		commands.ddo(Commands.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -50,7 +49,7 @@ public class CommandTest extends BaseCommandTest {
 	
 
 	@Test public void nothingToUndo_Noop() {
-		SequenceOfCommands commands = new SequenceOfCommands_CompensationImpl(env);
+		SequenceOfCommands_CompensationImpl commands = new SequenceOfCommands_CompensationImpl(env);
 		commands.undo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}
