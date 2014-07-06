@@ -10,7 +10,7 @@ public class SequenceOfCommands_SnapshotImpl {
 		this.env = env;
 	}
 
-	public void ddo(Snapshotable todo) {
+	public void ddo(SnapshotableCommand todo) {
 		Restorable snapshot = todo.snapshot();
 		todo.execute(this.env);
 		//undoStack.push(todo);
