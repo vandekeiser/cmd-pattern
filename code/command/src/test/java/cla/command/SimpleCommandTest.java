@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class BasicCommandTest extends BaseCommandTest {
+public class SimpleCommandTest extends BaseCommandTest {
 
 	@Test public void basicCommandExecution() {
 		Command addCarrot = CommandFactory.addCarrot(); 

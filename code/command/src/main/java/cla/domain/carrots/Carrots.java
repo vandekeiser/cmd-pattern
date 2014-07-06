@@ -1,6 +1,5 @@
-package cla.command.env;
+package cla.domain.carrots;
 
-import cla.domain.carrots.Carrot;
 
 public interface Carrots {
 

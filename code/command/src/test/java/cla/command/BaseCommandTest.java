@@ -6,7 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 
 import cla.command.env.Env;
-import cla.command.test.TestEnv;
 
 public abstract class BaseCommandTest {
 
