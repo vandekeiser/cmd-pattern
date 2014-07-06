@@ -6,4 +6,6 @@ public interface UndoableCommands {
 
 	void undo();
 
+	void redo();
+
 }

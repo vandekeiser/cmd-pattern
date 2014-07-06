@@ -31,6 +31,19 @@ public class CommandTest {
 		commands.undo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}
+	
+	@Test public void redo() {
+		UndoableCommands commands = new UndoableCommands_StackImpl(env);
+		
+		commands.ddo(Commands.addCarrot());
+		assertEquals(1, env.carrots().numberOfCarrots());
+		
+		commands.undo();
+		assertEquals(0, env.carrots().numberOfCarrots());
+		
+		commands.redo();
+		assertEquals(1, env.carrots().numberOfCarrots());
+	}
 
 	
 	//--------setup/teardown VVVVVVVVV
