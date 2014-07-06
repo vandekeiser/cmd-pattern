@@ -11,7 +11,8 @@ public class SequenceOfCommands_SnapshotImpl {
 		this.env = env;
 	}
 
-	public void ddo(Command todo) {
+	public void ddo(Snapshotable todo) {
+		Restorable snapshot = todo.snapshot();
 		todo.execute(this.env);
 		//undoStack.push(todo);
 	}
