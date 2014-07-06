@@ -11,7 +11,7 @@ public class CommandUndoTest_Snapshot extends BaseCommandTest {
 	@Test public void undo() {
 		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
 		
-		commands.ddo(Commands.addCarrot());
+		commands.ddo(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
 		
 		commands.undo();

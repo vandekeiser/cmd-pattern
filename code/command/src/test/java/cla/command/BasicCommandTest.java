@@ -7,7 +7,7 @@ import org.junit.Test;
 public class BasicCommandTest extends BaseCommandTest {
 
 	@Test public void basicCommandExecution() {
-		Command addCarrot = Commands.addCarrot(); 
+		Command addCarrot = CommandFactory.addCarrot(); 
 		addCarrot.execute(env);
 		assertEquals(1, env.carrots().numberOfCarrots() );
 	}

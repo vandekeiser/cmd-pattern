@@ -1,6 +1,5 @@
 package cla.command.undo.snapshot;
 
-import cla.command.Command;
 import cla.command.env.Env;
 
 public class SequenceOfCommands_SnapshotImpl {

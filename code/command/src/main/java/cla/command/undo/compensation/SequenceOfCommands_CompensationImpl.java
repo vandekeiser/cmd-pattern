@@ -1,6 +1,5 @@
 package cla.command.undo.compensation;
 
-import cla.command.Command;
 import cla.command.env.Env;
 
 public class SequenceOfCommands_CompensationImpl {
@@ -14,26 +13,26 @@ public class SequenceOfCommands_CompensationImpl {
 		this.redoStack = new CommandStack();
 	}
 
-	public void ddo(Command todo) {
+	public void ddo(CompensableCommand todo) {
 		todo.execute(this.env);
 		undoStack.push(todo);
 	}
 
 	public void undo() {
-		Command lastDone = undoStack.pop();
+		CompensableCommand lastDone = undoStack.pop();
 		if(lastDone==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas) 
-		lastDone.undo(env);
+		lastDone.compensate(env);
 		
-		Command lastUndone = lastDone;//La commande qui était la derniere executee est desormais la derniere annulee
+		CompensableCommand lastUndone = lastDone;//La commande qui était la derniere executee est desormais la derniere annulee
 		redoStack.push(lastUndone);
 	}
 
 	public void redo() {
-		Command lastUndone = redoStack.pop();
+		CompensableCommand lastUndone = redoStack.pop();
 		if(lastUndone==null) return; 
 		lastUndone.execute(env);
 		
-		Command lastDone = lastUndone;//La commande qui était la derniere annulee est desormais la derniere executee
+		CompensableCommand lastDone = lastUndone;//La commande qui était la derniere annulee est desormais la derniere executee
 		undoStack.push(lastDone);
 	}
 

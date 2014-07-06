@@ -11,7 +11,7 @@ public class CommandUndoTest_Compensation extends BaseCommandTest {
 	@Test public void undo() {
 		SequenceOfCommands_CompensationImpl commands = new SequenceOfCommands_CompensationImpl(env);
 		
-		commands.ddo(Commands.addCarrot());
+		commands.ddo(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
 		
 		commands.undo();
@@ -21,7 +21,7 @@ public class CommandUndoTest_Compensation extends BaseCommandTest {
 	@Test public void redo() {
 		SequenceOfCommands_CompensationImpl commands = new SequenceOfCommands_CompensationImpl(env);
 		
-		commands.ddo(Commands.addCarrot());
+		commands.ddo(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
 		
 		commands.undo();
@@ -34,7 +34,7 @@ public class CommandUndoTest_Compensation extends BaseCommandTest {
 	@Test public void redo_undo() {
 		SequenceOfCommands_CompensationImpl commands = new SequenceOfCommands_CompensationImpl(env);
 		
-		commands.ddo(Commands.addCarrot());
+		commands.ddo(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
 		
 		commands.undo();
