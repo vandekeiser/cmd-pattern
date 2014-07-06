@@ -2,14 +2,14 @@ package cla.command.undo.stack;
 
 import cla.command.Command;
 import cla.command.env.Env;
-import cla.command.undo.UndoableCommands;
+import cla.command.undo.SequenceOfCommands;
 
-public class UndoableCommands_StackImpl implements UndoableCommands {
+public class SequenceOfCommands_CompensationImpl implements SequenceOfCommands {
 
 	private final Env env;
 	private final CommandStack undoStack, redoStack;
 	
-	public UndoableCommands_StackImpl(Env env) {
+	public SequenceOfCommands_CompensationImpl(Env env) {
 		this.env = env;
 		this.undoStack = new CommandStack();
 		this.redoStack = new CommandStack();

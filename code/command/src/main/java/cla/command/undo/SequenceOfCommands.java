@@ -2,7 +2,7 @@ package cla.command.undo;
 
 import cla.command.Command;
 
-public interface UndoableCommands {
+public interface SequenceOfCommands {
 
 	void ddo(Command addCarrot);
 

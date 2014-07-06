@@ -4,13 +4,13 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import cla.command.undo.UndoableCommands;
-import cla.command.undo.stack.UndoableCommands_StackImpl;
+import cla.command.undo.SequenceOfCommands;
+import cla.command.undo.stack.SequenceOfCommands_CompensationImpl;
 
 public class CommandTest extends BaseCommandTest {
 
 	@Test public void undo() {
-		UndoableCommands commands = new UndoableCommands_StackImpl(env);
+		SequenceOfCommands commands = new SequenceOfCommands_CompensationImpl(env);
 		
 		commands.ddo(Commands.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -20,7 +20,7 @@ public class CommandTest extends BaseCommandTest {
 	}
 	
 	@Test public void redo() {
-		UndoableCommands commands = new UndoableCommands_StackImpl(env);
+		SequenceOfCommands commands = new SequenceOfCommands_CompensationImpl(env);
 		
 		commands.ddo(Commands.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -33,7 +33,7 @@ public class CommandTest extends BaseCommandTest {
 	}
 	
 	@Test public void redo_undo() {
-		UndoableCommands commands = new UndoableCommands_StackImpl(env);
+		SequenceOfCommands commands = new SequenceOfCommands_CompensationImpl(env);
 		
 		commands.ddo(Commands.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -50,7 +50,7 @@ public class CommandTest extends BaseCommandTest {
 	
 
 	@Test public void nothingToUndo_Noop() {
-		UndoableCommands commands = new UndoableCommands_StackImpl(env);
+		SequenceOfCommands commands = new SequenceOfCommands_CompensationImpl(env);
 		commands.undo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}
