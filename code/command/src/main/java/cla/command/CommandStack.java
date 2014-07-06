@@ -11,8 +11,11 @@ public class CommandStack {
 		stack.push(cmd);
 	}
 
+	/**
+	 * @return null si la stack est vide
+	 */
 	public Command pop() {
-		return stack.pop();
+		return stack.pollLast();
 	}
 
 }

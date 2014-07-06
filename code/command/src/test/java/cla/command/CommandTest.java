@@ -62,6 +62,11 @@ public class CommandTest {
 	}
 	
 
+	@Test public void nothingToUndo_Noop() {
+		UndoableCommands commands = new UndoableCommands_StackImpl(env);
+		commands.undo();
+		assertEquals(0, env.carrots().numberOfCarrots());
+	}
 	
 	//--------setup/teardown VVVVVVVVV
 	@Before public void setup() {
