@@ -8,8 +8,15 @@ public enum Commands {
 	
 	public static class AddCarrot implements Command {
 
+		private Carrot addedCarrot;
+		
 		@Override public void execute(Env env) {
-			env.carrots().addCarrot(new Carrot());
+			addedCarrot = new Carrot();
+			env.carrots().addCarrot(addedCarrot);
+		}
+
+		@Override public void undo(Env env) {
+			env.carrots().removeCarrot(addedCarrot);
 		}
 		
 	}

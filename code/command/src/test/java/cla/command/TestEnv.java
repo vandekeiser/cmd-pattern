@@ -26,6 +26,10 @@ public class TestEnv implements Env {
 			return carrots.size();
 		}
 
+		@Override public void removeCarrot(Carrot carrot) {
+			carrots.remove(carrot);
+		}
+
 	}
 	//--------test impls ^^^^^^^^^
 }

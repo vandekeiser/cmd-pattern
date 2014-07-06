@@ -13,19 +13,23 @@ public class CommandTest {
 	@Test public void addCarrot() {
 		Command addCarrot = Commands.addCarrot(); 
 		addCarrot.execute(env);
-		assertEquals(
-				1, 
-				env.carrots().numberOfCarrots()
-		);
+		assertEquals(1, env.carrots().numberOfCarrots() );
 	}
 	
 	@Test public void macro() {
 		Command addCarrot = Commands.addCarrot(); 
 		addCarrot.execute(env);
-		assertEquals(
-				1, 
-				env.carrots().numberOfCarrots()
-		);
+		assertEquals(1, env.carrots().numberOfCarrots());
+	}
+	
+	@Test public void undo() {
+		UndoableCommands commands = new UndoableCommands_StackImpl(env);
+		
+		commands.ddo(Commands.addCarrot());
+		assertEquals(1, env.carrots().numberOfCarrots());
+		
+		commands.undo();
+		assertEquals(0, env.carrots().numberOfCarrots());
 	}
 
 	

@@ -8,4 +8,6 @@ public interface Carrots {
 
 	int numberOfCarrots();
 
+	void removeCarrot(Carrot carrot);
+
 }
