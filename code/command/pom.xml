@@ -12,6 +12,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <dependencies>
@@ -34,14 +35,14 @@
            <target>1.8</target>
            <verbose>true</verbose>
            <fork>true</fork>
-           <executable>${env.JAVA_1_8_HOME}/bin/javac</executable>
+           <executable>${env.JAVA_HOME}/bin/javac</executable>
          </configuration>
        </plugin>
 
        <plugin>
            <artifactId>maven-surefire-plugin</artifactId>
            <configuration>
-           <jvm>${env.JAVA_1_8_HOME}/bin/java</jvm>
+           <jvm>${env.JAVA_HOME}/bin/java</jvm>
            <!--if launching surefire generates incompatible class version error, tests haven't been launched yet (0 tests). We want to make the build fail in this case.-->
            <failIfNoTests>true</failIfNoTests>
            </configuration>
