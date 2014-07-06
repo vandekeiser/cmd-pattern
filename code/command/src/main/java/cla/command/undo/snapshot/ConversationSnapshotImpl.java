@@ -3,12 +3,12 @@ package cla.command.undo.snapshot;
 import cla.domain.Env;
 
 
-public class SequenceOfCommands_SnapshotImpl {
+public class ConversationSnapshotImpl {
 
 	private final Env env;
 	private final SnapshotStack undoStack, redoStack;
 	
-	public SequenceOfCommands_SnapshotImpl(Env env) {
+	public ConversationSnapshotImpl(Env env) {
 		this.env = env;
 		this.undoStack = new SnapshotStack();
 		this.redoStack = new SnapshotStack();

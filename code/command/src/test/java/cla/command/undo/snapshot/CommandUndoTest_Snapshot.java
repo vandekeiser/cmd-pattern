@@ -11,7 +11,7 @@ import cla.command.CommandFactory;
 public class CommandUndoTest_Snapshot extends BaseCommandTest {
 
 	@Test public void undo() {
-		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
+		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		
 		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -21,7 +21,7 @@ public class CommandUndoTest_Snapshot extends BaseCommandTest {
 	}
 	
 	@Test public void undo_undo() {
-		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
+		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		
 		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -34,7 +34,7 @@ public class CommandUndoTest_Snapshot extends BaseCommandTest {
 	}
 	
 	@Test public void undo_redo() {
-		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
+		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		
 		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -47,7 +47,7 @@ public class CommandUndoTest_Snapshot extends BaseCommandTest {
 	}
 	
 	@Test public void undo_redo_undo() {
-		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
+		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		
 		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -64,12 +64,12 @@ public class CommandUndoTest_Snapshot extends BaseCommandTest {
 	
 
 	@Test public void nothingToUndo_Noop() {
-		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
+		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		commands.undo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}
 	@Test public void nothingToUndoUndo_Noop() {
-		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
+		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		
 		commands.undo();
 		assertEquals(0, env.carrots().numberOfCarrots());
@@ -79,12 +79,12 @@ public class CommandUndoTest_Snapshot extends BaseCommandTest {
 	}
 	
 	@Test public void nothingToRedo_Noop() {
-		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
+		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		commands.redo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}
 	@Test public void nothingToRedoRedo_Noop() {
-		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
+		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		commands.redo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}

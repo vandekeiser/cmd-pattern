@@ -3,12 +3,12 @@ package cla.command.undo.compensation;
 import cla.domain.Env;
 
 
-public class SequenceOfCommands_CompensationImpl {
+public class ConversationCompensationImpl {
 
 	private final Env env;
 	private final CommandStack undoStack, redoStack;
 	
-	public SequenceOfCommands_CompensationImpl(Env env) {
+	public ConversationCompensationImpl(Env env) {
 		this.env = env;
 		this.undoStack = new CommandStack();
 		this.redoStack = new CommandStack();
