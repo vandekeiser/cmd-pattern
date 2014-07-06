@@ -2,30 +2,13 @@ package cla.command;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import cla.command.env.Env;
 import cla.command.undo.UndoableCommands;
 import cla.command.undo.stack.UndoableCommands_StackImpl;
 
-public class CommandTest {
+public class CommandTest extends BaseCommandTest {
 
-	private Env env;
-
-	@Test public void addCarrot() {
-		Command addCarrot = Commands.addCarrot(); 
-		addCarrot.execute(env);
-		assertEquals(1, env.carrots().numberOfCarrots() );
-	}
-	
-	@Test public void macro() {
-		Command addCarrot = Commands.addCarrot(); 
-		addCarrot.execute(env);
-		assertEquals(1, env.carrots().numberOfCarrots());
-	}
-	
 	@Test public void undo() {
 		UndoableCommands commands = new UndoableCommands_StackImpl(env);
 		
@@ -71,20 +54,5 @@ public class CommandTest {
 		commands.undo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}
-	
-	//--------setup/teardown VVVVVVVVV
-	@Before public void setup() {
-		env = new TestEnv();
-		
-		assertEquals(
-				0, 
-				env.carrots().numberOfCarrots()
-		);
-	}
-	
-	@After public void teardown() {
-		
-	}
-	//--------setup/teardown ^^^^^^^^^
 	
 }

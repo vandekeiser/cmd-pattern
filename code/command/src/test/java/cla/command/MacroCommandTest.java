@@ -1,0 +1,15 @@
+package cla.command;
+
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
+public class MacroCommandTest extends BaseCommandTest {
+
+	@Test public void macro() {
+		Command addCarrot = Commands.addCarrot(); 
+		addCarrot.execute(env);
+		assertEquals(1, env.carrots().numberOfCarrots());
+	}
+	
+}

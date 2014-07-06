@@ -1,4 +1,4 @@
-package cla.command;
+package cla.command.test;
 
 import java.util.HashSet;
 import java.util.Set;
