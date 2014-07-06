@@ -32,7 +32,6 @@ public class SequenceOfCommands_SnapshotImpl {
 		
 		lastSnapshot.restore(env);
 		
-		//XXX nommage
 		redoStack.push(lastSnapshot);
 	}
 
@@ -42,7 +41,6 @@ public class SequenceOfCommands_SnapshotImpl {
 		if(lastSnapshot==null) return; 
 		lastSnapshot.restore(env);
 		
-		//XXX nommage
 		undoStack.push(lastSnapshot);
 	}
 

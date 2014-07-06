@@ -20,7 +20,20 @@ public class CommandUndoTest_Snapshot extends BaseCommandTest {
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}
 	
-	@Test public void redo() {
+	@Test public void undo_undo() {
+		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
+		
+		commands.exec(CommandFactory.addCarrot());
+		assertEquals(1, env.carrots().numberOfCarrots());
+		
+		commands.undo();
+		assertEquals(0, env.carrots().numberOfCarrots());
+		
+		commands.undo();
+		assertEquals(0, env.carrots().numberOfCarrots());
+	}
+	
+	@Test public void undo_redo() {
 		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
 		
 		commands.exec(CommandFactory.addCarrot());
@@ -33,7 +46,7 @@ public class CommandUndoTest_Snapshot extends BaseCommandTest {
 		assertEquals(1, env.carrots().numberOfCarrots());
 	}
 	
-	@Test @Ignore public void redo_undo() {
+	@Test public void undo_redo_undo() {
 		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
 		
 		commands.exec(CommandFactory.addCarrot());
@@ -53,6 +66,26 @@ public class CommandUndoTest_Snapshot extends BaseCommandTest {
 	@Test public void nothingToUndo_Noop() {
 		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
 		commands.undo();
+		assertEquals(0, env.carrots().numberOfCarrots());
+	}
+	@Test public void nothingToUndoUndo_Noop() {
+		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
+		
+		commands.undo();
+		assertEquals(0, env.carrots().numberOfCarrots());
+		
+		commands.undo();
+		assertEquals(0, env.carrots().numberOfCarrots());
+	}
+	
+	@Test public void nothingToRedo_Noop() {
+		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
+		commands.redo();
+		assertEquals(0, env.carrots().numberOfCarrots());
+	}
+	@Test public void nothingToRedoRedo_Noop() {
+		SequenceOfCommands_SnapshotImpl commands = new SequenceOfCommands_SnapshotImpl(env);
+		commands.redo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}
 		
