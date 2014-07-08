@@ -1,7 +1,5 @@
 package cla.domain;
 
-import java.io.PrintStream;
-
 import cla.domain.carrots.Carrots;
 
 

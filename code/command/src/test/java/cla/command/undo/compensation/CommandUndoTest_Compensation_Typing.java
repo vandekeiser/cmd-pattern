@@ -2,12 +2,10 @@ package cla.command.undo.compensation;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import cla.command.BaseCommandTest;
 import cla.command.CommandFactory;
-import cla.command.undo.snapshot.ConversationSnapshotImpl;
 
 public class CommandUndoTest_Compensation_Typing extends BaseCommandTest {
 
