@@ -1,5 +1,7 @@
 package cla.command;
 
+import java.util.List;
+
 import cla.command.undo.compensation.CompensableCommand;
 import cla.command.undo.snapshot.Restorable;
 import cla.command.undo.snapshot.SnapshotableCommand;
@@ -23,9 +25,21 @@ public class TypeString implements CompensableCommand, SnapshotableCommand {
 	}
 
 	@Override public Restorable snapshot(Env env) {
-		String snapshot =  env.display().displayed();
+		List<String> snapshot =  env.display().getState();
 		System.out.println("TypeString/snapshot: " + snapshot);
-		return (Env e) -> {e.display().setDisplay(snapshot);};
+		
+//		return (Env e) -> {
+//			e.display().setState(snapshot);
+//		};
+		return new Restorable() {
+			@Override public void restore(Env e) {
+				e.display().setState(snapshot);
+			}
+			
+			@Override public String toString() {
+				return String.format("%s{snapshot: %s}", Restorable.class.getSimpleName(), snapshot);
+			}
+		};
 	}
 	
 	@Override public String toString() {

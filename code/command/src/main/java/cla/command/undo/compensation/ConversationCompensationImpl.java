@@ -20,21 +20,19 @@ public class ConversationCompensationImpl {
 	}
 
 	public void undo() {
-		CompensableCommand lastDone = undoStack.pop();
-		if(lastDone==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas) 
-		lastDone.compensate(env);
+		CompensableCommand latestCmd = undoStack.pop();
+		if(latestCmd==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas) 
+		latestCmd.compensate(env);
 		
-		CompensableCommand lastUndone = lastDone;//La commande qui était la derniere executee est desormais la derniere annulee
-		redoStack.push(lastUndone);
+		redoStack.push(latestCmd);
 	}
 
 	public void redo() {
-		CompensableCommand lastUndone = redoStack.pop();
-		if(lastUndone==null) return; 
-		lastUndone.execute(env);
+		CompensableCommand latestCmd = redoStack.pop();
+		if(latestCmd==null) return; 
+		latestCmd.execute(env);
 		
-		CompensableCommand lastDone = lastUndone;//La commande qui était la derniere annulee est desormais la derniere executee
-		undoStack.push(lastDone);
+		undoStack.push(latestCmd);
 	}
 
 	@Override public String toString() {

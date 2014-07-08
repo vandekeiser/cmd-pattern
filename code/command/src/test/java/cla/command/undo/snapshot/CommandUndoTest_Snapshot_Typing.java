@@ -14,7 +14,7 @@ public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void undo() {
-		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+		ConversationMementoImpl commands = new ConversationMementoImpl(env);
 		
 		commands.exec(CommandFactory.typeString("a"));
 		assertEquals("a", env.display().displayed());
@@ -29,7 +29,7 @@ public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void undo_undo() {
-		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+		ConversationMementoImpl commands = new ConversationMementoImpl(env);
 		
 		commands.exec(CommandFactory.typeString("a"));
 		assertEquals("a", env.display().displayed());
@@ -47,7 +47,7 @@ public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 	 * redo --> "a"
 	 */
 	@Test public void undo_redo() {
-		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+		ConversationMementoImpl commands = new ConversationMementoImpl(env);
 		
 		commands.exec(CommandFactory.typeString("a"));
 		assertEquals("a", env.display().displayed());
@@ -66,7 +66,7 @@ public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void undo_redo_undo() {
-		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+		ConversationMementoImpl commands = new ConversationMementoImpl(env);
 		
 		commands.exec(CommandFactory.typeString("a"));
 		assertEquals("a", env.display().displayed());
@@ -83,7 +83,7 @@ public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void nothingToUndo_Noop() {
-		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+		ConversationMementoImpl commands = new ConversationMementoImpl(env);
 		
 		commands.undo();
 		assertEquals("", env.display().displayed());
@@ -93,7 +93,7 @@ public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void nothingToUndoUndo_Noop() {
-		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+		ConversationMementoImpl commands = new ConversationMementoImpl(env);
 		
 		commands.undo();
 		assertEquals("", env.display().displayed());
@@ -106,7 +106,7 @@ public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 	 * redo --> ""
 	 */
 	@Test public void nothingToRedo_Noop() {
-		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+		ConversationMementoImpl commands = new ConversationMementoImpl(env);
 		
 		commands.redo();
 		assertEquals("", env.display().displayed());
@@ -116,7 +116,7 @@ public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 	 * redo --> ""
 	 */
 	@Test public void nothingToRedoRedo_Noop() {
-		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+		ConversationMementoImpl commands = new ConversationMementoImpl(env);
 		
 		commands.redo();
 		assertEquals("", env.display().displayed());
@@ -124,5 +124,29 @@ public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 		commands.redo();
 		assertEquals("", env.display().displayed());
 	}
+
+	/**
+	 * a    --> "a"
+	 * b    --> "b" 
+	 * undo --> ""
+	 */
+	@Test public void typeA_typeB_undo_undo() {
+		ConversationMementoImpl commands = new ConversationMementoImpl(env);
 		
+		System.out.println();System.out.println();
+		commands.exec(CommandFactory.typeString("a"));
+		assertEquals("a", env.display().displayed());
+		
+		System.out.println();System.out.println();
+		commands.exec(CommandFactory.typeString("b"));
+		assertEquals("ab", env.display().displayed());
+		
+		System.out.println();System.out.println();
+		commands.undo();
+		assertEquals("a", env.display().displayed());
+		
+		System.out.println();System.out.println();
+		commands.undo();
+		assertEquals("", env.display().displayed());
+	}
 }
