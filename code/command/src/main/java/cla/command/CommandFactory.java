@@ -9,4 +9,8 @@ public enum CommandFactory {
 		return new AddCarrot();
 	}
 
+	public static TypeString typeString(String stringToType) {
+		return new TypeString(stringToType);
+	}
+
 }

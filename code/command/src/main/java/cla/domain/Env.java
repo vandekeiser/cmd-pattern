@@ -1,5 +1,7 @@
 package cla.domain;
 
+import java.io.PrintStream;
+
 import cla.domain.carrots.Carrots;
 
 
@@ -7,5 +9,7 @@ import cla.domain.carrots.Carrots;
 public interface Env {
 
 	Carrots carrots();
+
+	Display display();
 
 }

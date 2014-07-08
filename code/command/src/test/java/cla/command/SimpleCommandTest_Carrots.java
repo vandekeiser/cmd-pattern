@@ -4,13 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class SimpleCommandTest extends BaseCommandTest {
+public class SimpleCommandTest_Carrots extends BaseCommandTest {
 
-	@Test public void basicCommandExecution() {
+	@Test public void basicCommandExecution_addCarrot() {
 		Command addCarrot = CommandFactory.addCarrot(); 
 		addCarrot.execute(env);
 		assertEquals(1, env.carrots().numberOfCarrots() );
 	}
-	
 	
 }
