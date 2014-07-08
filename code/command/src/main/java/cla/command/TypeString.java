@@ -25,7 +25,7 @@ public class TypeString implements CompensableCommand, SnapshotableCommand {
 	}
 
 	@Override public Restorable snapshot(Env env) {
-		List<String> snapshot =  env.display().getState();
+		final List<String> snapshot =  env.display().getState();
 		System.out.println("TypeString/snapshot: " + snapshot);
 		
 //		return (Env e) -> {

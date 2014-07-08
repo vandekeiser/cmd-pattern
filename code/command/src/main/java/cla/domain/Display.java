@@ -8,7 +8,15 @@ public interface Display {
 
 	public void unappend();
 
+	/**
+	 * @return A defensive copy of the current display state.
+	 */
 	List<String> getState();
+	
+	/**
+	 * Sets display state to a defensive copy of state.
+	 * @param state
+	 */
 	void setState(List<String> state);
 
 	

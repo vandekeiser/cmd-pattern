@@ -53,6 +53,11 @@ public class MementoConversation {
 	}
 
 	@Override public String toString() {
-		return String.format("%s{undoStack:%s, redoStack:%s}", MementoConversation.class.getSimpleName(), undoStack, redoStack);
+		return String.format(
+				"%s{undoStack:%s, redoStack:%s}", 
+				MementoConversation.class.getSimpleName(), 
+				undoStack, 
+				redoStack
+		);
 	}
 }

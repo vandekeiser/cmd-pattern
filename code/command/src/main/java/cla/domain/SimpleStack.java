@@ -5,7 +5,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class SimpleStack<T> {
+//<string>?
+class SimpleStack<T> {
 	
 	private final LinkedList<T> stack;
 
