@@ -8,7 +8,7 @@ class MementoStack {
 	private final LinkedList<Memento> stack = new LinkedList<>();
 	
 	public void push(Memento cmd) {
-		stack.push(cmd);
+		stack.addFirst(cmd);
 	}
 
 	/**
