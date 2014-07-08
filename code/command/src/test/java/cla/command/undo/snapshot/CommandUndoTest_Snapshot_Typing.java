@@ -149,4 +149,71 @@ public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 		commands.undo();
 		assertEquals("", env.display().displayed());
 	}
+	
+	@Test public void complexConversation() {
+		ConversationMementoImpl commands = new ConversationMementoImpl(env);
+		
+		commands.exec(CommandFactory.typeString("a"));
+		assertEquals("a", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("", env.display().displayed());
+		
+		commands.exec(CommandFactory.typeString("b"));
+		assertEquals("b", env.display().displayed());
+		
+		commands.exec(CommandFactory.typeString("c"));
+		assertEquals("bc", env.display().displayed());
+		
+		commands.exec(CommandFactory.typeString("d"));
+		assertEquals("bcd", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("bc", env.display().displayed());
+		
+		commands.redo();
+		assertEquals("bcd", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("bc", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("b", env.display().displayed());
+		
+		commands.exec(CommandFactory.typeString("e"));
+		assertEquals("be", env.display().displayed());
+		
+		commands.exec(CommandFactory.typeString("f"));
+		assertEquals("bef", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("be", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("b", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("", env.display().displayed());
+		
+		commands.redo();
+		assertEquals("b", env.display().displayed());
+		
+		commands.redo();
+		assertEquals("be", env.display().displayed());
+		
+		commands.redo();
+		assertEquals("bef", env.display().displayed());
+		
+		commands.redo();
+		assertEquals("bef", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("be", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("b", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("", env.display().displayed());
+	}
 }
