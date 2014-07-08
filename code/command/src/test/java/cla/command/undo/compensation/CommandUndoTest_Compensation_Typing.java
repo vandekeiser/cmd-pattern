@@ -11,6 +11,10 @@ import cla.command.undo.snapshot.ConversationSnapshotImpl;
 
 public class CommandUndoTest_Compensation_Typing extends BaseCommandTest {
 
+	/**
+	 * a    --> "a" 
+	 * undo --> ""
+	 */
 	@Test public void undo() {
 		ConversationCompensationImpl commands = new ConversationCompensationImpl(env);
 		
@@ -21,6 +25,11 @@ public class CommandUndoTest_Compensation_Typing extends BaseCommandTest {
 		assertEquals("", env.display().displayed());
 	}
 	
+	/**
+	 * a    --> "a" 
+	 * undo --> ""
+	 * redo --> "a"
+	 */
 	@Test public void redo() {
 		ConversationCompensationImpl commands = new ConversationCompensationImpl(env);
 		
@@ -34,24 +43,33 @@ public class CommandUndoTest_Compensation_Typing extends BaseCommandTest {
 		assertEquals("a", env.display().displayed());
 	}
 	
-	@Test @Ignore public void redo_undo() {
+	/**
+	 * a    --> "a" 
+	 * undo --> ""
+	 * redo --> "a"
+	 * undo --> ""
+	 */
+	@Test public void redo_undo() {
 		ConversationCompensationImpl commands = new ConversationCompensationImpl(env);
 		
-		commands.exec(CommandFactory.addCarrot());
-		assertEquals(1, env.carrots().numberOfCarrots());
+		commands.exec(CommandFactory.typeString("a"));
+		assertEquals("a", env.display().displayed());
 		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals("", env.display().displayed());
 		
 		commands.redo();
-		assertEquals(1, env.carrots().numberOfCarrots());
+		assertEquals("a", env.display().displayed());
 		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals("", env.display().displayed());
 	}
 	
 
-	@Test @Ignore public void nothingToUndo_Noop() {
+	/**
+	 * undo --> ""
+	 */
+	@Test public void nothingToUndo_Noop() {
 		ConversationCompensationImpl commands = new ConversationCompensationImpl(env);
 		commands.undo();
 		assertEquals(0, env.carrots().numberOfCarrots());
