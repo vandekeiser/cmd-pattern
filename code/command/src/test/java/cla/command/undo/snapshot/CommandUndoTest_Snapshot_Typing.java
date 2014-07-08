@@ -66,7 +66,7 @@ public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void undo_redo_undo() {
-ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		
 		commands.exec(CommandFactory.typeString("a"));
 		assertEquals("a", env.display().displayed());
