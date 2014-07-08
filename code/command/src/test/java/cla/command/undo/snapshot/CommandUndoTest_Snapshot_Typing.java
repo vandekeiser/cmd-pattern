@@ -2,7 +2,6 @@ package cla.command.undo.snapshot;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import cla.command.BaseCommandTest;
@@ -24,73 +23,106 @@ public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 		assertEquals("", env.display().displayed());
 	}
 	
-	@Test @Ignore public void undo_undo() {
+	/**
+	 * a    --> "a" 
+	 * undo --> ""
+	 * undo --> ""
+	 */
+	@Test public void undo_undo() {
 		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		
-		commands.exec(CommandFactory.addCarrot());
-		assertEquals(1, env.carrots().numberOfCarrots());
+		commands.exec(CommandFactory.typeString("a"));
+		assertEquals("a", env.display().displayed());
 		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals("", env.display().displayed());
 		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals("", env.display().displayed());
 	}
 	
-	@Test @Ignore public void undo_redo() {
+	/**
+	 * a    --> "a" 
+	 * undo --> ""
+	 * redo --> "a"
+	 */
+	@Test public void undo_redo() {
 		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		
-		commands.exec(CommandFactory.addCarrot());
-		assertEquals(1, env.carrots().numberOfCarrots());
+		commands.exec(CommandFactory.typeString("a"));
+		assertEquals("a", env.display().displayed());
 		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals("", env.display().displayed());
 		
 		commands.redo();
-		assertEquals(1, env.carrots().numberOfCarrots());
+		assertEquals("a", env.display().displayed());
 	}
 	
-	@Test @Ignore public void undo_redo_undo() {
-		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+	/**
+	 * a    --> "a" 
+	 * undo --> ""
+	 * redo --> "a"
+	 * undo --> ""
+	 */
+	@Test public void undo_redo_undo() {
+ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		
-		commands.exec(CommandFactory.addCarrot());
-		assertEquals(1, env.carrots().numberOfCarrots());
+		commands.exec(CommandFactory.typeString("a"));
+		assertEquals("a", env.display().displayed());
 		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals("", env.display().displayed());
 		
 		commands.redo();
-		assertEquals(1, env.carrots().numberOfCarrots());
-		
-		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals("a", env.display().displayed());
 	}
 	
 
-	@Test @Ignore public void nothingToUndo_Noop() {
+	/**
+	 * undo --> ""
+	 */
+	@Test public void nothingToUndo_Noop() {
 		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals("", env.display().displayed());
 	}
-	@Test @Ignore public void nothingToUndoUndo_Noop() {
+	/**
+	 * undo --> ""
+	 * undo --> ""
+	 */
+	@Test public void nothingToUndoUndo_Noop() {
 		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals("", env.display().displayed());
 		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals("", env.display().displayed());
 	}
 	
-	@Test @Ignore public void nothingToRedo_Noop() {
+	/**
+	 * redo --> ""
+	 */
+	@Test public void nothingToRedo_Noop() {
 		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+		
 		commands.redo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals("", env.display().displayed());
 	}
-	@Test @Ignore public void nothingToRedoRedo_Noop() {
+	/**
+	 * redo --> ""
+	 * redo --> ""
+	 */
+	@Test public void nothingToRedoRedo_Noop() {
 		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
+		
 		commands.redo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals("", env.display().displayed());
+		
+		commands.redo();
+		assertEquals("", env.display().displayed());
 	}
 		
 }
