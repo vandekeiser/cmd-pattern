@@ -3,12 +3,12 @@ package cla.command.undo.compensation;
 import cla.domain.Env;
 
 
-public class ConversationCompensationImpl {
+public class CompensationConversation {
 
 	private final Env env;
 	private final CommandStack undoStack, redoStack;
 	
-	public ConversationCompensationImpl(Env env) {
+	public CompensationConversation(Env env) {
 		this.env = env;
 		this.undoStack = new CommandStack();
 		this.redoStack = new CommandStack();
@@ -36,6 +36,6 @@ public class ConversationCompensationImpl {
 	}
 
 	@Override public String toString() {
-		return String.format("%s{undoStack:%s, redoStack:%s}", ConversationCompensationImpl.class.getSimpleName(), undoStack, redoStack);
+		return String.format("%s{undoStack:%s, redoStack:%s}", CompensationConversation.class.getSimpleName(), undoStack, redoStack);
 	}
 }

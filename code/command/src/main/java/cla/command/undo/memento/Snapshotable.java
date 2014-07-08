@@ -1,4 +1,4 @@
-package cla.command.undo.snapshot;
+package cla.command.undo.memento;
 
 import cla.domain.Env;
 

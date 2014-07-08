@@ -27,9 +27,9 @@ class TestCarrots implements Carrots {
 		return new HashSet<>(carrots);
 	}
 
-	@Override public void setAllCarrots(Set<Carrot> snapshot) {
+	@Override public void setAllCarrots(Set<Carrot> newState) {
 		carrots.clear();
-		carrots.addAll(snapshot);
+		carrots.addAll(newState);
 	}
 
 }

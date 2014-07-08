@@ -1,14 +1,14 @@
-package cla.command.undo.snapshot;
+package cla.command.undo.memento;
 
 import cla.domain.Env;
 
 
-public class ConversationMementoImpl {
+public class MementoConversation {
 
 	private final Env env;
 	private final MementoStack undoStack, redoStack;
 	
-	public ConversationMementoImpl(Env env) {
+	public MementoConversation(Env env) {
 		this.env = env;
 		this.undoStack = new MementoStack();
 		this.redoStack = new MementoStack();
@@ -53,6 +53,6 @@ public class ConversationMementoImpl {
 	}
 
 	@Override public String toString() {
-		return String.format("%s{undoStack:%s, redoStack:%s}", ConversationMementoImpl.class.getSimpleName(), undoStack, redoStack);
+		return String.format("%s{undoStack:%s, redoStack:%s}", MementoConversation.class.getSimpleName(), undoStack, redoStack);
 	}
 }

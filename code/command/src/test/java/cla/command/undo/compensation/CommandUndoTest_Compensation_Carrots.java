@@ -10,7 +10,7 @@ import cla.command.CommandFactory;
 public class CommandUndoTest_Compensation_Carrots extends BaseCommandTest {
 
 	@Test public void undo() {
-		ConversationCompensationImpl commands = new ConversationCompensationImpl(env);
+		CompensationConversation commands = new CompensationConversation(env);
 		
 		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -20,7 +20,7 @@ public class CommandUndoTest_Compensation_Carrots extends BaseCommandTest {
 	}
 	
 	@Test public void redo() {
-		ConversationCompensationImpl commands = new ConversationCompensationImpl(env);
+		CompensationConversation commands = new CompensationConversation(env);
 		
 		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -33,7 +33,7 @@ public class CommandUndoTest_Compensation_Carrots extends BaseCommandTest {
 	}
 	
 	@Test public void redo_undo() {
-		ConversationCompensationImpl commands = new ConversationCompensationImpl(env);
+		CompensationConversation commands = new CompensationConversation(env);
 		
 		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -50,7 +50,7 @@ public class CommandUndoTest_Compensation_Carrots extends BaseCommandTest {
 	
 
 	@Test public void nothingToUndo_Noop() {
-		ConversationCompensationImpl commands = new ConversationCompensationImpl(env);
+		CompensationConversation commands = new CompensationConversation(env);
 		commands.undo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}

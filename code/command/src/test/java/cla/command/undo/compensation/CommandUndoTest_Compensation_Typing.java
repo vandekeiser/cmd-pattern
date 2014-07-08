@@ -14,7 +14,7 @@ public class CommandUndoTest_Compensation_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void undo() {
-		ConversationCompensationImpl commands = new ConversationCompensationImpl(env);
+		CompensationConversation commands = new CompensationConversation(env);
 		
 		commands.exec(CommandFactory.typeString("a"));
 		assertEquals("a", env.display().displayed());
@@ -29,7 +29,7 @@ public class CommandUndoTest_Compensation_Typing extends BaseCommandTest {
 	 * redo --> "a"
 	 */
 	@Test public void redo() {
-		ConversationCompensationImpl commands = new ConversationCompensationImpl(env);
+		CompensationConversation commands = new CompensationConversation(env);
 		
 		commands.exec(CommandFactory.typeString("a"));
 		assertEquals("a", env.display().displayed());
@@ -48,7 +48,7 @@ public class CommandUndoTest_Compensation_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void redo_undo() {
-		ConversationCompensationImpl commands = new ConversationCompensationImpl(env);
+		CompensationConversation commands = new CompensationConversation(env);
 		
 		commands.exec(CommandFactory.typeString("a"));
 		assertEquals("a", env.display().displayed());
@@ -68,7 +68,7 @@ public class CommandUndoTest_Compensation_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void nothingToUndo_Noop() {
-		ConversationCompensationImpl commands = new ConversationCompensationImpl(env);
+		CompensationConversation commands = new CompensationConversation(env);
 		commands.undo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}

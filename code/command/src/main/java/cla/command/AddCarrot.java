@@ -3,8 +3,8 @@ package cla.command;
 import java.util.Set;
 
 import cla.command.undo.compensation.CompensableCommand;
-import cla.command.undo.snapshot.Restorable;
-import cla.command.undo.snapshot.SnapshotableCommand;
+import cla.command.undo.memento.Restorable;
+import cla.command.undo.memento.SnapshotableCommand;
 import cla.domain.Env;
 import cla.domain.carrots.Carrot;
 

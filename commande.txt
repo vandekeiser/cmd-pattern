@@ -2,3 +2,67 @@ pas les mm conventions (y compris de nommage (_)) ds les tests vs code de prod
 
 compensation: pass assez testé cf. inversion pollLast-->first sans echec test..
 	(application mm modif que pour fixzer memento)
+
+
+commands.exec(CommandFactory.typeString("a")); a
+		assertEquals("a", env.display().displayed()); "a"
+		
+		commands.undo(); --> a Z
+		assertEquals("", env.display().displayed());  ""
+		
+		commands.exec(CommandFactory.typeString("b")); --> a Z b
+		assertEquals("b", env.display().displayed()); "b"
+		
+		commands.exec(CommandFactory.typeString("c")); --> a Z b c
+		assertEquals("bc", env.display().displayed()); "bc"
+		
+		commands.exec(CommandFactory.typeString("d")); --> a Z b c d
+		assertEquals("bcd", env.display().displayed()); "bcd"
+		
+		commands.undo();                               --> a Z b c d Z 
+		assertEquals("bc", env.display().displayed()); "bc"
+		
+		commands.redo();                               --> a Z b c d Z Y
+		assertEquals("bcd", env.display().displayed()); "bcd"
+		
+		commands.undo();                               --> a Z b c d Z Y Z 
+		assertEquals("bc", env.display().displayed()); "bc"
+		
+		commands.undo();								--> a Z b c d Z Y Z Z
+		assertEquals("b", env.display().displayed());   ""
+		
+		commands.exec(CommandFactory.typeString("e"));
+		assertEquals("be", env.display().displayed());
+		
+		commands.exec(CommandFactory.typeString("f"));
+		assertEquals("bef", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("be", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("b", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("", env.display().displayed());
+		
+		commands.redo();
+		assertEquals("b", env.display().displayed());
+		
+		commands.redo();
+		assertEquals("be", env.display().displayed());
+		
+		commands.redo();
+		assertEquals("bef", env.display().displayed());
+		
+		commands.redo();
+		assertEquals("bef", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("be", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("b", env.display().displayed());
+		
+		commands.undo();
+		assertEquals("", env.display().displayed());

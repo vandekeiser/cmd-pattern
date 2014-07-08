@@ -1,4 +1,4 @@
-package cla.command.undo.snapshot;
+package cla.command.undo.memento;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,11 +6,12 @@ import org.junit.Test;
 
 import cla.command.BaseCommandTest;
 import cla.command.CommandFactory;
+import cla.command.undo.memento.MementoConversation;
 
-public class CommandUndoTest_Snapshot_Carrots extends BaseCommandTest {
+public class CommandUndoTest_Memento_Carrots extends BaseCommandTest {
 
 	@Test public void undo() {
-		ConversationMementoImpl commands = new ConversationMementoImpl(env);
+		MementoConversation commands = new MementoConversation(env);
 		
 		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -20,7 +21,7 @@ public class CommandUndoTest_Snapshot_Carrots extends BaseCommandTest {
 	}
 	
 	@Test public void undo_undo() {
-		ConversationMementoImpl commands = new ConversationMementoImpl(env);
+		MementoConversation commands = new MementoConversation(env);
 		
 		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -33,7 +34,7 @@ public class CommandUndoTest_Snapshot_Carrots extends BaseCommandTest {
 	}
 	
 	@Test public void undo_redo() {
-		ConversationMementoImpl commands = new ConversationMementoImpl(env);
+		MementoConversation commands = new MementoConversation(env);
 		
 		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -46,7 +47,7 @@ public class CommandUndoTest_Snapshot_Carrots extends BaseCommandTest {
 	}
 	
 	@Test public void undo_redo_undo() {
-		ConversationMementoImpl commands = new ConversationMementoImpl(env);
+		MementoConversation commands = new MementoConversation(env);
 		
 		commands.exec(CommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
@@ -63,12 +64,12 @@ public class CommandUndoTest_Snapshot_Carrots extends BaseCommandTest {
 	
 
 	@Test public void nothingToUndo_Noop() {
-		ConversationMementoImpl commands = new ConversationMementoImpl(env);
+		MementoConversation commands = new MementoConversation(env);
 		commands.undo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}
 	@Test public void nothingToUndoUndo_Noop() {
-		ConversationMementoImpl commands = new ConversationMementoImpl(env);
+		MementoConversation commands = new MementoConversation(env);
 		
 		commands.undo();
 		assertEquals(0, env.carrots().numberOfCarrots());
@@ -78,12 +79,12 @@ public class CommandUndoTest_Snapshot_Carrots extends BaseCommandTest {
 	}
 	
 	@Test public void nothingToRedo_Noop() {
-		ConversationMementoImpl commands = new ConversationMementoImpl(env);
+		MementoConversation commands = new MementoConversation(env);
 		commands.redo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}
 	@Test public void nothingToRedoRedo_Noop() {
-		ConversationMementoImpl commands = new ConversationMementoImpl(env);
+		MementoConversation commands = new MementoConversation(env);
 		commands.redo();
 		assertEquals(0, env.carrots().numberOfCarrots());
 	}

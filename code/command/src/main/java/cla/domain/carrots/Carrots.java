@@ -17,9 +17,9 @@ public interface Carrots {
 	Set<Carrot> getAllCarrots();
 	
 	/**
-	 * Resets state to a defensive copy (to avoid issues if the caller modifies the snapshot after calling this method)
-	 * @param snapshot
+	 * Resets state to a defensive copy (to avoid issues if the caller modifies newState after calling this method)
+	 * @param newState
 	 */
-	void setAllCarrots(Set<Carrot> snapshot);
+	void setAllCarrots(Set<Carrot> newState);
 
 }
