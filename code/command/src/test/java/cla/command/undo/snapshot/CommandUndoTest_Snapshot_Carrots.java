@@ -7,7 +7,7 @@ import org.junit.Test;
 import cla.command.BaseCommandTest;
 import cla.command.CommandFactory;
 
-public class CommandUndoTest_Snapshot extends BaseCommandTest {
+public class CommandUndoTest_Snapshot_Carrots extends BaseCommandTest {
 
 	@Test public void undo() {
 		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
