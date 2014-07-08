@@ -10,7 +10,11 @@ import cla.command.CommandFactory;
 
 public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 
-	@Test @Ignore public void undo() {
+	/**
+	 * a    --> "a" 
+	 * undo --> ""
+	 */
+	@Test public void undo() {
 		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		
 		commands.exec(CommandFactory.typeString("a"));

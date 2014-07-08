@@ -9,4 +9,6 @@ public interface Display {
 
 	public String displayed();
 
+	void setDisplay(String snapshot);
+
 }

@@ -18,5 +18,10 @@ public class SimpleStack<T> {
 	public Iterable<T> allElements() {
 		return new ArrayList<T>(stack);
 	}
+
+	public void setSingleElement(T singleElement) {
+		stack.clear();
+		stack.push(singleElement);
+	}
 	
 }

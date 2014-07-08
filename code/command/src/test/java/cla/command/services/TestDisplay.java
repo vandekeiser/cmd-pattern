@@ -21,4 +21,8 @@ public class TestDisplay implements Display {
 		return sb.toString();
 	}
 
+	@Override public void setDisplay(String snapshot) {
+		stack.setSingleElement(snapshot);
+	}
+
 }
