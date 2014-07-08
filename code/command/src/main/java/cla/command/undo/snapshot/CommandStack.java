@@ -18,4 +18,7 @@ class SnapshotStack {
 		return stack.pollLast();
 	}
 
+	@Override public String toString() {
+		return String.format("%s{stack:%s}", SnapshotStack.class.getSimpleName(), stack);
+	}
 }

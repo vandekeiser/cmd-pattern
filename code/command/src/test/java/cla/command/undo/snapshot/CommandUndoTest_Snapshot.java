@@ -2,7 +2,6 @@ package cla.command.undo.snapshot;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import cla.command.BaseCommandTest;

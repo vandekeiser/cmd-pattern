@@ -18,4 +18,7 @@ class CommandStack {
 		return stack.pollLast();
 	}
 
+	@Override public String toString() {
+		return String.format("%s{stack:%s}", CommandStack.class.getSimpleName(), stack);
+	}
 }

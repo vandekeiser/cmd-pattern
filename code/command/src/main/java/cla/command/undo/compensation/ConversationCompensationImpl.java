@@ -37,4 +37,7 @@ public class ConversationCompensationImpl {
 		undoStack.push(lastDone);
 	}
 
+	@Override public String toString() {
+		return String.format("%s{undoStack:%s, redoStack:%s}", ConversationCompensationImpl.class.getSimpleName(), undoStack, redoStack);
+	}
 }

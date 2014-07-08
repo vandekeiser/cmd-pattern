@@ -44,5 +44,7 @@ public class ConversationSnapshotImpl {
 		undoStack.push(lastSnapshot);
 	}
 
-	
+	@Override public String toString() {
+		return String.format("%s{undoStack:%s, redoStack:%s}", ConversationSnapshotImpl.class.getSimpleName(), undoStack, redoStack);
+	}
 }

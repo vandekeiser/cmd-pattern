@@ -29,4 +29,7 @@ public class AddCarrot implements CompensableCommand, SnapshotableCommand {
 		return (Env e) -> {e.carrots().setAllCarrots(snapshot);};
 	}
 	
+	@Override public String toString() {
+		return String.format("%s{addedCarrot:%s}", AddCarrot.class.getSimpleName(), addedCarrot);
+	}
 }
