@@ -14,7 +14,7 @@ public class ConversationCompensationImpl {
 		this.redoStack = new CommandStack();
 	}
 
-	public void ddo(CompensableCommand todo) {
+	public void exec(CompensableCommand todo) {
 		todo.execute(this.env);
 		undoStack.push(todo);
 	}

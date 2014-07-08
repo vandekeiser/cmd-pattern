@@ -1,16 +1,16 @@
 package cla.command.undo.snapshot;
 
 import static org.junit.Assert.assertEquals;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import cla.command.BaseCommandTest;
 import cla.command.CommandFactory;
 
-public class CommandUndoTest_Snapshot_Display extends BaseCommandTest {
+public class CommandUndoTest_Snapshot_Typing extends BaseCommandTest {
 
-	@Test public void undo() {
+	@Test @Ignore public void undo() {
 		ConversationSnapshotImpl commands = new ConversationSnapshotImpl(env);
 		
 		commands.exec(CommandFactory.typeString("a"));
