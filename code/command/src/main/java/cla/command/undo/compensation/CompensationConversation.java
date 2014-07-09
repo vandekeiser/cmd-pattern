@@ -17,6 +17,7 @@ public class CompensationConversation {
 	public void exec(CompensableCommand todo) {
 		todo.execute(this.env);
 		undoStack.push(todo);
+		redoStack.clear();
 	}
 
 	public void undo() {
