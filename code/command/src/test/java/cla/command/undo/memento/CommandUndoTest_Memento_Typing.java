@@ -157,65 +157,83 @@ public class CommandUndoTest_Memento_Typing extends BaseCommandTest {
 		commands.exec(CommandFactory.typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.exec(CommandFactory.typeString("b"));
 		assertEquals("b", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.exec(CommandFactory.typeString("c"));
 		assertEquals("bc", env.display().displayed());
 		
-		//------------
+		System.out.println();System.out.println();
 		commands.exec(CommandFactory.typeString("d"));
 		assertEquals("bcd", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("bc", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("bcd", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("bc", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("b", env.display().displayed());
 		
-		//------------
+		System.out.println();System.out.println();
 		commands.exec(CommandFactory.typeString("e"));
 		assertEquals("be", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.exec(CommandFactory.typeString("f"));
 		assertEquals("bef", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("be", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("b", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("b", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("be", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("bef", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("bef", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("be", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("b", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("", env.display().displayed());
 	}

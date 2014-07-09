@@ -2,6 +2,8 @@ pas les mm conventions (y compris de nommage (_)) ds les tests vs code de prod
 
 TODO: jdepend
 
+mettre des enums stragegies
+
 compensation: pass assez testé cf. inversion pollLast-->first sans echec test..
 	(application mm modif que pour fixzer memento)
 

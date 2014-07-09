@@ -1,25 +1,26 @@
 package cla.command.services;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import cla.domain.Display;
 
 public class TestDisplay implements Display {
 
-	private final List<String> displayElements = new ArrayList<>();
+	private final LinkedList<String> displayElements = new LinkedList<>();
 	
 	@Override public void append(String stringToAppend) {
 		System.out.printf("TestDisplay/append(%s)%n", stringToAppend);
 		
 		System.out.println("TestDisplay/append/BEFORE/displayElements: " + displayElements);
-		displayElements.add(stringToAppend);
+		displayElements.addLast(stringToAppend);
 		System.out.println("TestDisplay/append/AFTER/displayElements: " + displayElements);
 	}
 
 	@Override public void unappend() {
 		System.out.println("TestDisplay/unappend/BEFORE/displayElements: " + displayElements);
-		displayElements.remove(displayElements.size()-1);
+		displayElements.removeLast();
 		System.out.println("TestDisplay/unappend/AFTER/displayElements: " + displayElements);
 	}
 
