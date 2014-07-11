@@ -40,4 +40,8 @@ public class TestDisplay implements Display {
 		displayElements.addAll(newState);
 	}
 
+	@Override public void reset() {
+		displayElements.clear();
+	}
+
 }

@@ -21,5 +21,7 @@ public interface Display {
 
 	
 	public String displayed();
+
+	void reset();
 	
 }

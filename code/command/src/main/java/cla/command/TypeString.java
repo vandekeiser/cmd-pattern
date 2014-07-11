@@ -5,10 +5,11 @@ import java.util.List;
 import cla.command.undo.compensation.CompensableCommand;
 import cla.command.undo.memento.Restorable;
 import cla.command.undo.memento.SnapshotableCommand;
+import cla.command.undo.replay.ResetableCommand;
 import cla.domain.Env;
 
 //TODO add generic add/remove/upd?
-public class TypeString implements CompensableCommand, SnapshotableCommand {
+public class TypeString implements CompensableCommand, SnapshotableCommand, ResetableCommand {
 
 	private final String stringToType;
 	
@@ -42,7 +43,14 @@ public class TypeString implements CompensableCommand, SnapshotableCommand {
 		};
 	}
 	
+	@Override public Command resetCmd() {
+		return (Env e) -> {
+			e.display().reset();
+		};
+	}
+	
 	@Override public String toString() {
 		return String.format("%s{stringToType:%s}", TypeString.class.getSimpleName(), stringToType);
 	}
+	
 }

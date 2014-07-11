@@ -2,7 +2,7 @@ package cla.command.undo.compensation;
 
 import java.util.LinkedList;
 
-class CommandStack {
+class CompensableCommandStack {
 
 	//La delegation permet de n'exposer que push et pop
 	private final LinkedList<CompensableCommand> stack = new LinkedList<>();
@@ -23,7 +23,7 @@ class CommandStack {
 	}
 	
 	@Override public String toString() {
-		return String.format("%s{stack:%s}", CommandStack.class.getSimpleName(), stack);
+		return String.format("%s{stack:%s}", CompensableCommandStack.class.getSimpleName(), stack);
 	}
 	
 }

@@ -6,12 +6,12 @@ import cla.domain.Env;
 public class CompensationConversation {
 
 	private final Env env;
-	private final CommandStack undoStack, redoStack;
+	private final CompensableCommandStack undoStack, redoStack;
 	
 	public CompensationConversation(Env env) {
 		this.env = env;
-		this.undoStack = new CommandStack();
-		this.redoStack = new CommandStack();
+		this.undoStack = new CompensableCommandStack();
+		this.redoStack = new CompensableCommandStack();
 	}
 
 	public void exec(CompensableCommand todo) {
