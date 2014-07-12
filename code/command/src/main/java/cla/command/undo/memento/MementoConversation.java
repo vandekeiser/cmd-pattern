@@ -7,12 +7,12 @@ import cla.domain.Env;
 public class MementoConversation implements Conversation<SnapshotableCommand> {
 
 	private final Env env;
-	private final MementoStack undoStack, redoStack;
+	private final BeforeAfterMementoStack undoStack, redoStack;
 	
 	public MementoConversation(Env env) {
 		this.env = env;
-		this.undoStack = new MementoStack();
-		this.redoStack = new MementoStack();
+		this.undoStack = new BeforeAfterMementoStack();
+		this.redoStack = new BeforeAfterMementoStack();
 	}
 
 	@Override public void exec(SnapshotableCommand todo) {
@@ -22,7 +22,7 @@ public class MementoConversation implements Conversation<SnapshotableCommand> {
 		todo.execute(this.env);
 		Restorable snapshotAfter = todo.snapshot(env);
 		
-		undoStack.push(new Memento(snapshotBefore, snapshotAfter));
+		undoStack.push(new BeforeAfterMemento(snapshotBefore, snapshotAfter));
 		redoStack.clear();
 		System.out.println("ConversationMementoImpl/exec/END/undoStack: " + undoStack);
 	}
@@ -30,7 +30,7 @@ public class MementoConversation implements Conversation<SnapshotableCommand> {
 	@Override public void undo() {
 		System.out.println("ConversationMementoImpl/undo/START:" + undoStack);
 		
-		Memento latestMemento = undoStack.pop();
+		BeforeAfterMemento latestMemento = undoStack.pop();
 		System.out.println("ConversationMementoImpl/latestMemento:" + latestMemento);
 		if(latestMemento==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas)
 		
@@ -45,7 +45,7 @@ public class MementoConversation implements Conversation<SnapshotableCommand> {
 	@Override public void redo() {
 		System.out.println("ConversationMementoImpl/redo/START/redoStack: " + redoStack);
 		
-		Memento latestMemento = redoStack.pop();
+		BeforeAfterMemento latestMemento = redoStack.pop();
 		if(latestMemento==null) return; 
 		
 		Restorable latestAfter = latestMemento.snapshotAfter;
