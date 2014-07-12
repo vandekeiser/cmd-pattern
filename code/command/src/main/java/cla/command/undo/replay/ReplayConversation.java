@@ -14,68 +14,44 @@ public class ReplayConversation {
 
 	private final Env env;
 	//private final Resets resets;
-	private final ResetableList undoList, redoList;
+	private final ReplayableList undoList, redoList;
 	
 	public ReplayConversation(Env env) {
 		this.env = env;
 		//this.resets = new Resets();
-		this.undoList = new ResetableList();
-		this.redoList = new ResetableList();
+		this.undoList = new ReplayableList();
+		this.redoList = new ReplayableList();
 	}
 
 	public void exec(ResetableCommand todo) {
 		todo.execute(this.env);
-		//Command correspondingReset = todo.resetCmd();
 		
 		undoList.addLast(todo); 
 		redoList.clear(); 
 	}
 
 	public void undo() {
-		//resets.executeAll(env);
-		undoList.executeAll(env);
+		undoList.reset(env);
+
+		ResetableCommand latestCmd = undoList.removeLast(); 
+		if(latestCmd==null) return;
+		redoList.addLast(latestCmd);
 		
-//		ResetableCommand latestCmd = undoStack.pop();
-//		if(latestCmd==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas) 
-//		replayFifoUpTo(latestCmd);
-//		
-//		redoStack.push(latestCmd);
+		undoList.replay(env);
 	}
 
 	public void redo() {
-//		ResetableCommand latestCmd = redoStack.pop();
-//		if(latestCmd==null) return; 
-//		latestCmd.execute(env);
-//		
-//		undoStack.push(latestCmd);
-//		replayFifoUpTo(latestCmd);
+		redoList.reset(env);
+
+		ResetableCommand latestCmd = redoList.peekLast(); 
+		if(latestCmd==null) return;
+		undoList.addLast(latestCmd);
+		
+		redoList.replay(env);
+		redoList.removeLast();
 	}
 
-//	private void replayFifoUpTo(ResetableCommand latestCmd) {
-//		List<ResetableCommand> allCmdsFifo = new LinkedList<>();
-//		ResetableCommand cmd;
-//		Set<Command> resets = new HashSet<>();//reset cmds should be equal by type..
-//		
-//		while((cmd = undoStack.pop())!=null) {
-//			allCmdsFifo.add(cmd);
-//			resets.add(cmd.resetCmd());
-//		}
-//		allCmdsFifo.add(latestCmd);
-//		resets.add(latestCmd.resetCmd());
-//		
-//		//Execute all kinfs of resets
-//		for(Command reset : resets) {
-//			reset.execute(env);
-//		}
-//		
-//		//Replay
-//		Collections.reverse(allCmdsFifo);
-//		for(Command _cmd : allCmdsFifo) {
-//			_cmd.execute(env);
-//		}
-//	}
-	
-//	@Override public String toString() {
-//		return String.format("%s{undoStack:%s, redoStack:%s}", ReplayConversation.class.getSimpleName(), undoStack, redoStack);
-//	}
+	@Override public String toString() {
+		return String.format("%s{undoList:%s, redoList:%s}", ReplayConversation.class.getSimpleName(), undoList, redoList);
+	}
 }
