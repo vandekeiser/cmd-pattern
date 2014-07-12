@@ -4,19 +4,18 @@ package cla.command.undo.memento;
 //@Immutable
 class BeforeAfterMemento {
 
-	final Restorable snapshotBefore, snapshotAfter;
+	final Memento before, after;
 	
 	/**
-	 * Both snapshots must be immutable.
-	 * @param snapshotBefore
-	 * @param snapshotAfter
+	 * @param before :ust be immutable
+	 * @param after  must be immutable
 	 */
-	public BeforeAfterMemento(Restorable snapshotBefore, Restorable snapshotAfter) {
-		this.snapshotBefore = snapshotBefore;
-		this.snapshotAfter = snapshotAfter;
+	public BeforeAfterMemento(Memento before, Memento after) {
+		this.before = before;
+		this.after = after;
 	}
 
 	@Override public String toString() {
-		return String.format("%s{snapshotBefore:%s, snapshotAfter:%s}", BeforeAfterMemento.class.getSimpleName(), snapshotBefore, snapshotAfter);
+		return String.format("%s{before:%s, after:%s}", BeforeAfterMemento.class.getSimpleName(), before, after);
 	}
 }

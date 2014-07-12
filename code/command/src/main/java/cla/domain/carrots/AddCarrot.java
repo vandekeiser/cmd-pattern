@@ -3,12 +3,12 @@ package cla.domain.carrots;
 import java.util.Set;
 
 import cla.command.undo.compensation.CompensableCommand;
-import cla.command.undo.memento.Restorable;
-import cla.command.undo.memento.SnapshotableCommand;
+import cla.command.undo.memento.Memento;
+import cla.command.undo.memento.MementoableCommand;
 import cla.domain.Env;
 
 //TODO add generic add/remove/upd?
-public class AddCarrot implements CompensableCommand, SnapshotableCommand {
+public class AddCarrot implements CompensableCommand, MementoableCommand {
 
 	private Carrot addedCarrot;
 	
@@ -21,10 +21,9 @@ public class AddCarrot implements CompensableCommand, SnapshotableCommand {
 		env.carrots().removeCarrot(addedCarrot);
 	}
 
-	@Override public Restorable snapshot(Env env) {
+	@Override public Memento snapshotOf(Env env) {
 		//allCarrots() guarantees it does a defensive copy, otherwise we would have to do a defensive copy here
 		Set<Carrot> snapshot =  env.carrots().getAllCarrots();
-		System.out.println("AddCarrot/snapshot: " + snapshot);
 		return (Env e) -> {e.carrots().setAllCarrots(snapshot);};
 	}
 	

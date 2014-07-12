@@ -4,7 +4,7 @@ import cla.command.Conversation;
 import cla.domain.Env;
 
 //Mieux testé que compensation..
-public class MementoConversation implements Conversation<SnapshotableCommand> {
+public class MementoConversation implements Conversation<MementoableCommand> {
 
 	private final Env env;
 	private final BeforeAfterMementoStack undoStack, redoStack;
@@ -15,42 +15,28 @@ public class MementoConversation implements Conversation<SnapshotableCommand> {
 		this.redoStack = new BeforeAfterMementoStack();
 	}
 
-	@Override public void exec(SnapshotableCommand todo) {
-		System.out.println("ConversationMementoImpl/exec/START");
-		
-		Restorable snapshotBefore = todo.snapshot(env);
+	@Override public void exec(MementoableCommand todo) {
+		Memento before = todo.snapshotOf(env);
 		todo.execute(this.env);
-		Restorable snapshotAfter = todo.snapshot(env);
+		Memento after = todo.snapshotOf(env);
 		
-		undoStack.push(new BeforeAfterMemento(snapshotBefore, snapshotAfter));
+		undoStack.push(new BeforeAfterMemento(before, after));
 		redoStack.clear();
-		System.out.println("ConversationMementoImpl/exec/END/undoStack: " + undoStack);
 	}
 
 	@Override public void undo() {
-		System.out.println("ConversationMementoImpl/undo/START:" + undoStack);
-		
 		BeforeAfterMemento latestMemento = undoStack.pop();
-		System.out.println("ConversationMementoImpl/latestMemento:" + latestMemento);
-		if(latestMemento==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas)
-		
-		Restorable latestBefore = latestMemento.snapshotBefore;
-		System.out.println("ConversationMementoImpl/latestBefore:" + latestBefore);
+		if(latestMemento==null) return;
+		Memento latestBefore = latestMemento.before;
 		latestBefore.restore(env);
-		
 		redoStack.push(latestMemento);
-		System.out.println("ConversationMementoImpl/undo/END/undoStack: " + undoStack);
 	}
 
 	@Override public void redo() {
-		System.out.println("ConversationMementoImpl/redo/START/redoStack: " + redoStack);
-		
 		BeforeAfterMemento latestMemento = redoStack.pop();
 		if(latestMemento==null) return; 
-		
-		Restorable latestAfter = latestMemento.snapshotAfter;
+		Memento latestAfter = latestMemento.after;
 		latestAfter.restore(env);
-		
 		undoStack.push(latestMemento);
 	}
 
