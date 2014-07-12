@@ -1,6 +1,5 @@
 package cla.domain.carrots;
 
-import cla.domain.typing.TypeString;
 
 
 public enum CarrotCommandFactory {
@@ -9,10 +8,6 @@ public enum CarrotCommandFactory {
 	
 	public static AddCarrot addCarrot() {
 		return new AddCarrot();
-	}
-
-	public static TypeString typeString(String stringToType) {
-		return new TypeString(stringToType);
 	}
 
 }
