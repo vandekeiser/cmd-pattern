@@ -7,7 +7,6 @@ import cla.domain.Env;
 public class ReplayConversation implements Conversation<ResetableCommand> {
 
 	private final Env env;
-	//private ReplayableList undoList, redoList;
 	private final ResetableCommandStack undoStack, redoStack;
 	
 	public ReplayConversation(Env env) {
@@ -32,38 +31,27 @@ public class ReplayConversation implements Conversation<ResetableCommand> {
 		System.out.println("ReplayConversation/undo/START/undoStack: " + undoStack);
 		System.out.println("ReplayConversation/undo/START/redoList: " + redoStack);
 
-		//Pb:
-		// -si pop tt de suite: supprime cmd ET reset -->la liste des resets est vide aussi
-		// -si pop pas tt de suite: le clean marche mais qd on fait replay la stack contient encore la derniere commande
-		//-->popCmd qui pop pas le reset
-		//ResetableCommand latestCmd = undoStack.peek();//latest.resetCmd.reset(env)?
-		ResetableCommand latestCmd = undoStack.pop();
-		
-		if(latestCmd==null) return; 
-		//si on a fait peek: contient encore la derniere commande
-		//si on a fait pop:  resets vide.. 
-		latestCmd.resetCmd().execute(env);
-		undoStack.replay(env);
-		//todo: pop reset?
-		//undoStack.pop();
-		redoStack.push(latestCmd);
-		
-		System.out.println("ReplayConversation/undo/END/undoStack: " + undoStack);
-		System.out.println("ReplayConversation/undo/END/redoList: " + redoStack);
+		if( undoStack.size() > 0 ) {
+			ResetableCommand change = undoStack.pop() ;
+            redoStack.push( change ) ;
+            reset() ;
+            undoStack.replay(env);
+        }
+	}
+
+	private void reset() {
+		env.display().reset();
 	}
 
 	@Override public void redo() {
 		System.out.println("ReplayConversation/redo/START/undoStack: " + undoStack);
 		System.out.println("ReplayConversation/redo/START/redoList: " + redoStack);
 
-		ResetableCommand latestCmd = redoStack.peek();
-		if(latestCmd==null) return; 
-		redoStack.replay(env);
-		redoStack.pop();
-		undoStack.push(latestCmd);
-		
-		System.out.println("ReplayConversation/redo/END/undoStack: " + undoStack);
-		System.out.println("ReplayConversation/redo/END/redoList: " + redoStack);
+		if( redoStack.size() > 0 ) {
+			ResetableCommand change = redoStack.pop() ;
+			change.execute(env) ;
+            undoStack.push( change ) ; 
+        }
 	}
 
 	@Override public String toString() {
