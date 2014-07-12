@@ -132,7 +132,7 @@ public class CommandUndoTest_Replay_Typing extends BaseCommandTest {
 	 * b    --> "b" 
 	 * undo --> ""
 	 */
-	@Test public void typeA_typeB_undo_undo() {
+	@Test @Ignore public void typeA_typeB_undo_undo() {
 		ReplayConversation commands = new ReplayConversation(env);
 		
 		System.out.println();System.out.println();

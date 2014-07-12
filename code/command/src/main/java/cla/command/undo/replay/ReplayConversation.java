@@ -13,60 +13,64 @@ import cla.domain.Env;
 public class ReplayConversation {
 
 	private final Env env;
-	private final ResetableCommandStack undoStack, redoStack;
+	private final Resets resets;
 	
 	public ReplayConversation(Env env) {
 		this.env = env;
-		this.undoStack = new ResetableCommandStack();
-		this.redoStack = new ResetableCommandStack();
+		this.resets = new Resets();
 	}
 
 	public void exec(ResetableCommand todo) {
 		todo.execute(this.env);
-		undoStack.push(todo);
-		redoStack.clear();//The usual redo semantics 
+		Command correspondingReset = todo.resetCmd();
+		
+		resets.add(correspondingReset); 
+		//redoStack.clear(); 
 	}
 
 	public void undo() {
-		ResetableCommand latestCmd = undoStack.pop();
-		if(latestCmd==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas) 
-		replayFifo();
-		
-		redoStack.push(latestCmd);
+		resets.executeAll(env);
+//		ResetableCommand latestCmd = undoStack.pop();
+//		if(latestCmd==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas) 
+//		replayFifoUpTo(latestCmd);
+//		
+//		redoStack.push(latestCmd);
 	}
 
 	public void redo() {
-		ResetableCommand latestCmd = redoStack.pop();
-		if(latestCmd==null) return; 
-		latestCmd.execute(env);
-		
-		undoStack.push(latestCmd);
-		replayFifo();
+//		ResetableCommand latestCmd = redoStack.pop();
+//		if(latestCmd==null) return; 
+//		latestCmd.execute(env);
+//		
+//		undoStack.push(latestCmd);
+//		replayFifoUpTo(latestCmd);
 	}
 
-	private void replayFifo() {
-		List<ResetableCommand> allCmdsFifo = new LinkedList<>();
-		ResetableCommand cmd;
-		Set<Command> resets = new HashSet<>();//reset cmds should be equal by type..
-		
-		while((cmd = undoStack.pop())!=null) {
-			allCmdsFifo.add(cmd);
-			resets.add(cmd.resetCmd());
-		}
-		
-		//Execute all kinfs of resets
-		for(Command reset : resets) {
-			reset.execute(env);
-		}
-		
-		//Replay
-		Collections.reverse(allCmdsFifo);
-		for(Command _cmd : allCmdsFifo) {
-			_cmd.execute(env);
-		}
-	}
+//	private void replayFifoUpTo(ResetableCommand latestCmd) {
+//		List<ResetableCommand> allCmdsFifo = new LinkedList<>();
+//		ResetableCommand cmd;
+//		Set<Command> resets = new HashSet<>();//reset cmds should be equal by type..
+//		
+//		while((cmd = undoStack.pop())!=null) {
+//			allCmdsFifo.add(cmd);
+//			resets.add(cmd.resetCmd());
+//		}
+//		allCmdsFifo.add(latestCmd);
+//		resets.add(latestCmd.resetCmd());
+//		
+//		//Execute all kinfs of resets
+//		for(Command reset : resets) {
+//			reset.execute(env);
+//		}
+//		
+//		//Replay
+//		Collections.reverse(allCmdsFifo);
+//		for(Command _cmd : allCmdsFifo) {
+//			_cmd.execute(env);
+//		}
+//	}
 	
-	@Override public String toString() {
-		return String.format("%s{undoStack:%s, redoStack:%s}", ReplayConversation.class.getSimpleName(), undoStack, redoStack);
-	}
+//	@Override public String toString() {
+//		return String.format("%s{undoStack:%s, redoStack:%s}", ReplayConversation.class.getSimpleName(), undoStack, redoStack);
+//	}
 }
