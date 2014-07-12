@@ -57,9 +57,11 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 		
 		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
+		System.out.println();System.out.println();
 		
 		commands.undo();
 		assertEquals("", env.display().displayed());
+		System.out.println();System.out.println();
 		
 		commands.redo();
 		assertEquals("a", env.display().displayed());

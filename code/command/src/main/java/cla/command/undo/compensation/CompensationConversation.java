@@ -23,9 +23,8 @@ public class CompensationConversation implements Conversation<CompensableCommand
 
 	@Override public void undo() {
 		CompensableCommand latestCmd = undoStack.pop();
-		if(latestCmd==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas) 
+		if(latestCmd==null) return; 
 		latestCmd.compensate(env);
-		
 		redoStack.push(latestCmd);
 	}
 
@@ -33,7 +32,6 @@ public class CompensationConversation implements Conversation<CompensableCommand
 		CompensableCommand latestCmd = redoStack.pop();
 		if(latestCmd==null) return; 
 		latestCmd.execute(env);
-		
 		undoStack.push(latestCmd);
 	}
 
