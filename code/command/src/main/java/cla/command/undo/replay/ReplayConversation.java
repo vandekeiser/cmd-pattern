@@ -13,23 +13,28 @@ import cla.domain.Env;
 public class ReplayConversation {
 
 	private final Env env;
-	private final Resets resets;
+	//private final Resets resets;
+	private final ResetableList undoList, redoList;
 	
 	public ReplayConversation(Env env) {
 		this.env = env;
-		this.resets = new Resets();
+		//this.resets = new Resets();
+		this.undoList = new ResetableList();
+		this.redoList = new ResetableList();
 	}
 
 	public void exec(ResetableCommand todo) {
 		todo.execute(this.env);
-		Command correspondingReset = todo.resetCmd();
+		//Command correspondingReset = todo.resetCmd();
 		
-		resets.add(correspondingReset); 
-		//redoStack.clear(); 
+		undoList.addLast(todo); 
+		redoList.clear(); 
 	}
 
 	public void undo() {
-		resets.executeAll(env);
+		//resets.executeAll(env);
+		undoList.executeAll(env);
+		
 //		ResetableCommand latestCmd = undoStack.pop();
 //		if(latestCmd==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas) 
 //		replayFifoUpTo(latestCmd);
