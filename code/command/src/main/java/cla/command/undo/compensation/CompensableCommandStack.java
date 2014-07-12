@@ -8,14 +8,14 @@ class CompensableCommandStack {
 	private final LinkedList<CompensableCommand> stack = new LinkedList<>();
 	
 	public void push(CompensableCommand cmd) {
-		stack.addFirst(cmd);
+		stack.addLast(cmd);
 	}
 
 	/**
 	 * @return null si la stack est vide
 	 */
 	public CompensableCommand pop() {
-		return stack.pollFirst();
+		return stack.pollLast();
 	}
 
 	public void clear() {

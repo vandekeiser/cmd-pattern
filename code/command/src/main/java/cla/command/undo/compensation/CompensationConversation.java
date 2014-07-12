@@ -1,6 +1,6 @@
 package cla.command.undo.compensation;
 
-import cla.command.undo.Conversation;
+import cla.command.Conversation;
 import cla.domain.Env;
 
 

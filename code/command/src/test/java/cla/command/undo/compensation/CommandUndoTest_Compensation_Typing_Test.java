@@ -1,7 +1,7 @@
 package cla.command.undo.compensation;
 
+import cla.command.Conversation;
 import cla.command.undo.CommandUndoTest_Typing;
-import cla.command.undo.Conversation;
 import cla.domain.Env;
 import cla.domain.typing.TypingCommandFactory;
 
