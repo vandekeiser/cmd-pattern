@@ -10,14 +10,14 @@ class ResetableCommandStack {
 	private final LinkedList<ResetableCommand> stack = new LinkedList<>();
 	
 	public void push(ResetableCommand cmd) {
-		stack.addFirst(cmd);
+		stack.addLast(cmd);
 	}
 
 	/**
 	 * @return null si la stack est vide
 	 */
 	public ResetableCommand pop() {
-		return stack.pollFirst();
+		return stack.pollLast();
 	}
 
 	public void clear() {
@@ -40,13 +40,8 @@ class ResetableCommandStack {
 //		});
 	}
 
-	public ResetableCommand peek() {
-		return stack.peekFirst();
-	}
-
-	public ResetableCommand popCmd() {
-		//ResetableCommand
-		return null;
+	public int size() {
+		return stack.size();
 	}
 	
 }
