@@ -20,9 +20,11 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 	@Test public void undo() {
 		Conversation<C> commands = newConversation(env);
 		
+		System.out.println();System.out.println();
 		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
+		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("", env.display().displayed());
 	}

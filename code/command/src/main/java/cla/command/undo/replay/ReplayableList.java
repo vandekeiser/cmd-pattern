@@ -6,7 +6,15 @@ import cla.domain.Env;
 
 public class ReplayableList {
 
-	private final LinkedList<ResetableCommand> resetables = new LinkedList<>();
+	private final LinkedList<ResetableCommand> resetables;
+
+	ReplayableList() {
+		this(new LinkedList<>());
+	}
+	
+	ReplayableList(LinkedList<ResetableCommand> resetables) {
+		this.resetables = new LinkedList<>(resetables);//defensive copy
+	}
 
 	public void addLast(ResetableCommand cmd) {
 		resetables.add(cmd);
@@ -27,9 +35,9 @@ public class ReplayableList {
 	public void reset(Env env) {
 		resetables.stream().forEach(cmd->{
 			cmd.resetCmd().execute(env);
-		});		
+		});
 	}
-
+	
 	public void replay(Env env) {
 		resetables.stream().forEachOrdered(cmd->{
 			cmd.execute(env);
@@ -38,6 +46,10 @@ public class ReplayableList {
 	
 	@Override public String toString() {
 		return String.format("%s{resetables: %s}", ReplayableList.class.getSimpleName(), resetables);
+	}
+
+	public ReplayableList copy() {
+		return new ReplayableList(this.resetables);
 	}
 
 }
