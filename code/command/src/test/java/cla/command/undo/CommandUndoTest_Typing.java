@@ -287,26 +287,37 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 	@Test public void exec_exec_undo_undo_redo_redo() {
 		Conversation<C> commands = newConversation(env);
 		
+		System.out.println("EXEC 1 (type A)");
 		commands.exec(typeString("a"));
+		System.out.println("expect \"a\"");
 		assertEquals("a", env.display().displayed());
 		
 		System.out.println();System.out.println();
+		System.out.println("EXEC 2 (type B)");
 		commands.exec(typeString("b"));
+		System.out.println("expect \"ab\"");
 		assertEquals("ab", env.display().displayed());
 		
 		System.out.println();System.out.println();
+		System.out.println("UNDO 1 (undo (type B))");
 		commands.undo();
+		System.out.println("expect \"a\"");
 		assertEquals("a", env.display().displayed());
 		
 		System.out.println();System.out.println();
+		System.out.println("UNDO 2 (undo (type A))");
 		commands.undo();
+		System.out.println("expect \"\"");
 		assertEquals("", env.display().displayed());
 		
 		System.out.println();System.out.println();
+		System.out.println("REDO 1 (redo (type A))");
 		commands.redo();
+		System.out.println("expect \"a\"");
 		assertEquals("a", env.display().displayed());
 		
 		System.out.println();System.out.println();
+		System.out.println("REDO 2 (redo (type B))");
 		commands.redo();
 		assertEquals("ab", env.display().displayed());
 	}
@@ -316,6 +327,10 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 	}
 	
 	@Test @Ignore public void undoAvec2TypesDeResets() {
+		//TODO
+	}
+	
+	@Test @Ignore public void stackProfondeurLimitee() {
 		//TODO
 	}
 }

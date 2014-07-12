@@ -8,65 +8,50 @@ public class ReplayConversation implements Conversation<ResetableCommand> {
 
 	private final Env env;
 	//private ReplayableList undoList, redoList;
-	private final ResetableCommandStack undoStack, redoStack;
+	//private final ResetableCommandStack stack;
+	private final ResetableCommandList list;
+	private int position = 0;
 	
 	public ReplayConversation(Env env) {
 		this.env = env;
-		this.undoStack = new ResetableCommandStack();
-		this.redoStack = new ResetableCommandStack();
+		this.list = new ResetableCommandList();
 	}
 
 	@Override public void exec(ResetableCommand todo) {
-		System.out.println("ReplayConversation/exec/START/undoStack: " + undoStack);
-		System.out.println("ReplayConversation/exec/START/redoStack: " + redoStack);
+		System.out.println("ReplayConversation/exec/START/todo: " + todo);
+		System.out.println("ReplayConversation/exec/START/list: " + list);
 		
 		todo.execute(this.env);
-		undoStack.push(todo);
-		redoStack.clear();
+		list.add(todo);
+		incPosition();
 		
-		System.out.println("ReplayConversation/exec/END/undoStack: " + undoStack);
-		System.out.println("ReplayConversation/exec/END/redoList: " + redoStack);
+		System.out.println("ReplayConversation/exec/END/list: " + list);
 	}
 
 	@Override public void undo() {
-		System.out.println("ReplayConversation/undo/START/undoStack: " + undoStack);
-		System.out.println("ReplayConversation/undo/START/redoList: " + redoStack);
-
-		//Pb:
-		// -si pop tt de suite: supprime cmd ET reset -->la liste des resets est vide aussi
-		// -si pop pas tt de suite: le clean marche mais qd on fait replay la stack contient encore la derniere commande
-		//-->popCmd qui pop pas le reset
-		//ResetableCommand latestCmd = undoStack.peek();//latest.resetCmd.reset(env)?
-		ResetableCommand latestCmd = undoStack.pop();
-		
-		if(latestCmd==null) return; 
-		//si on a fait peek: contient encore la derniere commande
-		//si on a fait pop:  resets vide.. 
-		latestCmd.resetCmd().execute(env);
-		undoStack.replay(env);
-		//todo: pop reset?
-		//undoStack.pop();
-		redoStack.push(latestCmd);
-		
-		System.out.println("ReplayConversation/undo/END/undoStack: " + undoStack);
-		System.out.println("ReplayConversation/undo/END/redoList: " + redoStack);
+		System.out.println("ReplayConversation/undo/START/list: " + list);
+		env.display().reset();
+		decPosition();
+		list.replayUpTo(position, env);
+		System.out.println("ReplayConversation/undo/END/list: " + list);
 	}
 
 	@Override public void redo() {
-		System.out.println("ReplayConversation/redo/START/undoStack: " + undoStack);
-		System.out.println("ReplayConversation/redo/START/redoList: " + redoStack);
-
-		ResetableCommand latestCmd = redoStack.peek();
-		if(latestCmd==null) return; 
-		redoStack.replay(env);
-		redoStack.pop();
-		undoStack.push(latestCmd);
-		
-		System.out.println("ReplayConversation/redo/END/undoStack: " + undoStack);
-		System.out.println("ReplayConversation/redo/END/redoList: " + redoStack);
+		System.out.println("ReplayConversation/redo/START/list: " + list);
+		env.display().reset();
+		incPosition();
+		list.replayUpTo(position, env);
+		System.out.println("ReplayConversation/redo/END/list: " + list);
 	}
 
+	private void incPosition() {
+		++position;
+	}
+	private void decPosition() {
+		position = Math.max(0, position - 1);
+	}
+	
 	@Override public String toString() {
-		return String.format("%s{undoStack:%s, redoList:%s}", ReplayConversation.class.getSimpleName(), undoStack, redoStack);
+		return String.format("%s{list:%s, position:%s}", ReplayConversation.class.getSimpleName(), list, position);
 	}
 }

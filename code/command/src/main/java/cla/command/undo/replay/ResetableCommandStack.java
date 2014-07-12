@@ -1,5 +1,6 @@
 package cla.command.undo.replay;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 import cla.domain.Env;
@@ -32,7 +33,9 @@ class ResetableCommandStack {
 //		stack.stream().forEach(cmd->{
 //			cmd.resetCmd().execute(env);
 //		});	
-		stack.stream().forEachOrdered(cmd->{
+		LinkedList<ResetableCommand> reversed = new LinkedList<>(stack);
+		Collections.reverse(reversed);
+		reversed.stream().forEachOrdered(cmd->{
 			cmd.execute(env);
 		});
 //		stack.stream().limit(stack.size()-1).forEachOrdered(cmd->{
