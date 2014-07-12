@@ -5,14 +5,14 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import cla.command.BaseCommandTest;
-import cla.command.CommandFactory;
+import cla.domain.carrots.CarrotCommandFactory;
 
 public class CommandUndoTest_Compensation_Carrots_Test extends BaseCommandTest {
 
 	@Test public void undo() {
 		CompensationConversation commands = new CompensationConversation(env);
 		
-		commands.exec(CommandFactory.addCarrot());
+		commands.exec(CarrotCommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
 		
 		commands.undo();
@@ -22,7 +22,7 @@ public class CommandUndoTest_Compensation_Carrots_Test extends BaseCommandTest {
 	@Test public void redo() {
 		CompensationConversation commands = new CompensationConversation(env);
 		
-		commands.exec(CommandFactory.addCarrot());
+		commands.exec(CarrotCommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
 		
 		commands.undo();
@@ -35,7 +35,7 @@ public class CommandUndoTest_Compensation_Carrots_Test extends BaseCommandTest {
 	@Test public void redo_undo() {
 		CompensationConversation commands = new CompensationConversation(env);
 		
-		commands.exec(CommandFactory.addCarrot());
+		commands.exec(CarrotCommandFactory.addCarrot());
 		assertEquals(1, env.carrots().numberOfCarrots());
 		
 		commands.undo();

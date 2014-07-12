@@ -1,7 +1,7 @@
 package cla.domain;
 
 import cla.domain.carrots.CarrotRepository;
-import cla.domain.carrots.typing.Display;
+import cla.domain.typing.Display;
 
 
 //aka ExecutionEnvironment

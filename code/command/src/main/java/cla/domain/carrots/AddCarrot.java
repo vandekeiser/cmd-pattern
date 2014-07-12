@@ -1,4 +1,4 @@
-package cla.command;
+package cla.domain.carrots;
 
 import java.util.Set;
 
@@ -6,7 +6,6 @@ import cla.command.undo.compensation.CompensableCommand;
 import cla.command.undo.memento.Restorable;
 import cla.command.undo.memento.SnapshotableCommand;
 import cla.domain.Env;
-import cla.domain.carrots.Carrot;
 
 //TODO add generic add/remove/upd?
 public class AddCarrot implements CompensableCommand, SnapshotableCommand {

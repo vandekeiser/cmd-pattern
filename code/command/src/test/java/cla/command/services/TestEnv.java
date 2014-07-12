@@ -2,7 +2,7 @@ package cla.command.services;
 
 import cla.domain.Env;
 import cla.domain.carrots.CarrotRepository;
-import cla.domain.carrots.typing.Display;
+import cla.domain.typing.Display;
 
 public class TestEnv implements Env {
 

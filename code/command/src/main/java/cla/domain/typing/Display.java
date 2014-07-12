@@ -1,4 +1,4 @@
-package cla.domain.carrots.typing;
+package cla.domain.typing;
 
 import java.util.List;
 

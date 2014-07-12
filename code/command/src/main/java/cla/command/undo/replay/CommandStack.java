@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import cla.command.Command;
 import cla.domain.Env;
 
-class ResetableCommandStack {
+class CommandStack {
 
 	//La delegation permet de n'exposer que push et pop
 	private final LinkedList<Command> stack = new LinkedList<>();
@@ -26,7 +26,7 @@ class ResetableCommandStack {
 	}
 	
 	@Override public String toString() {
-		return String.format("%s{stack:%s}", ResetableCommandStack.class.getSimpleName(), stack);
+		return String.format("%s{stack:%s}", CommandStack.class.getSimpleName(), stack);
 	}
 
 	public void replay(Env env) {

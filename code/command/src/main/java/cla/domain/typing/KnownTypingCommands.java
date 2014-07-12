@@ -1,4 +1,4 @@
-package cla.domain.carrots.typing;
+package cla.domain.typing;
 
 import cla.command.Command;
 import cla.domain.Env;

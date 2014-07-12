@@ -1,4 +1,4 @@
-package cla.command;
+package cla.domain.typing;
 
 import java.util.List;
 

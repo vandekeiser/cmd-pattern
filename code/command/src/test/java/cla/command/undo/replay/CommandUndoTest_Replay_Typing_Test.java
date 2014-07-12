@@ -1,11 +1,11 @@
 package cla.command.undo.replay;
 
 import cla.command.Command;
-import cla.command.CommandFactory;
 import cla.command.undo.CommandUndoTest_Typing;
 import cla.command.undo.Conversation;
 import cla.domain.Env;
-import cla.domain.carrots.typing.KnownTypingCommands;
+import cla.domain.typing.KnownTypingCommands;
+import cla.domain.typing.TypingCommandFactory;
 
 public class CommandUndoTest_Replay_Typing_Test extends CommandUndoTest_Typing<Command> {
 
@@ -14,7 +14,7 @@ public class CommandUndoTest_Replay_Typing_Test extends CommandUndoTest_Typing<C
 	}
 
 	@Override protected Command typeString(String stringToType) {
-		return CommandFactory.typeString(stringToType);
+		return TypingCommandFactory.typeString(stringToType);
 	}
 	
 }

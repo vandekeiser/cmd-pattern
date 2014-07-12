@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import cla.domain.carrots.typing.Display;
+import cla.domain.typing.Display;
 
 public class TestDisplay implements Display {
 

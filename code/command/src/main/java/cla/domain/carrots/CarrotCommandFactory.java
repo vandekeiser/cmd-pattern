@@ -1,9 +1,11 @@
-package cla.command;
+package cla.domain.carrots;
+
+import cla.domain.typing.TypeString;
 
 
-public enum CommandFactory {
+public enum CarrotCommandFactory {
 
-	; //Using no-values enum to emulate C# static class
+	; //Using no-values enum to emulate top-level static class
 	
 	public static AddCarrot addCarrot() {
 		return new AddCarrot();

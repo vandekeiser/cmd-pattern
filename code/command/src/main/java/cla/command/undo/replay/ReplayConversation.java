@@ -9,13 +9,13 @@ public class ReplayConversation implements Conversation<Command> {
 
 	private final Env env;
 	private final Command reset;
-	private final ResetableCommandStack undoStack, redoStack;
+	private final CommandStack undoStack, redoStack;
 	
 	public ReplayConversation(Env env, Command reset) {
 		this.env = env;
 		this.reset = reset;
-		this.undoStack = new ResetableCommandStack();
-		this.redoStack = new ResetableCommandStack();
+		this.undoStack = new CommandStack();
+		this.redoStack = new CommandStack();
 	}
 
 	@Override public void exec(Command todo) {

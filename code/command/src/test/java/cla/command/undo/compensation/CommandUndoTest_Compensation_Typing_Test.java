@@ -1,9 +1,9 @@
 package cla.command.undo.compensation;
 
-import cla.command.CommandFactory;
 import cla.command.undo.CommandUndoTest_Typing;
 import cla.command.undo.Conversation;
 import cla.domain.Env;
+import cla.domain.typing.TypingCommandFactory;
 
 public class CommandUndoTest_Compensation_Typing_Test extends CommandUndoTest_Typing<CompensableCommand> {
 
@@ -12,6 +12,6 @@ public class CommandUndoTest_Compensation_Typing_Test extends CommandUndoTest_Ty
 	}
 
 	@Override protected CompensableCommand typeString(String stringToType) {
-		return CommandFactory.typeString(stringToType);
+		return TypingCommandFactory.typeString(stringToType);
 	}
 }

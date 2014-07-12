@@ -6,12 +6,12 @@ import org.junit.Test;
 
 import cla.command.BaseCommandTest;
 import cla.command.Command;
-import cla.command.CommandFactory;
+import cla.domain.carrots.CarrotCommandFactory;
 
 public class MacroCommandTest_Carrots_Test extends BaseCommandTest {
 
 	@Test public void macro() {
-		Command addCarrot = CommandFactory.addCarrot(); 
+		Command addCarrot = CarrotCommandFactory.addCarrot(); 
 		addCarrot.execute(env);
 		assertEquals(1, env.carrots().numberOfCarrots());
 	}
