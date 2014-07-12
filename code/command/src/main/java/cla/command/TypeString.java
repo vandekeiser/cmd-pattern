@@ -5,11 +5,10 @@ import java.util.List;
 import cla.command.undo.compensation.CompensableCommand;
 import cla.command.undo.memento.Restorable;
 import cla.command.undo.memento.SnapshotableCommand;
-import cla.command.undo.replay.ResetableCommand;
 import cla.domain.Env;
 
 //TODO add generic add/remove/upd?
-public class TypeString implements CompensableCommand, SnapshotableCommand, ResetableCommand {
+public class TypeString implements CompensableCommand, SnapshotableCommand {
 
 	private final String stringToType;
 	
@@ -29,9 +28,6 @@ public class TypeString implements CompensableCommand, SnapshotableCommand, Rese
 		final List<String> snapshot =  env.display().getState();
 		System.out.println("TypeString/snapshot: " + snapshot);
 		
-//		return (Env e) -> {
-//			e.display().setState(snapshot);
-//		};
 		return new Restorable() {
 			@Override public void restore(Env e) {
 				e.display().setState(snapshot);
@@ -40,12 +36,6 @@ public class TypeString implements CompensableCommand, SnapshotableCommand, Rese
 			@Override public String toString() {
 				return String.format("%s{snapshot: %s}", Restorable.class.getSimpleName(), snapshot);
 			}
-		};
-	}
-	
-	@Override public Command resetCmd() {
-		return (Env e) -> {
-			e.display().reset();
 		};
 	}
 	

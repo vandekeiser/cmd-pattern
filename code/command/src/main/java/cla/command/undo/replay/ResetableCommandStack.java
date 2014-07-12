@@ -2,21 +2,22 @@ package cla.command.undo.replay;
 
 import java.util.LinkedList;
 
+import cla.command.Command;
 import cla.domain.Env;
 
 class ResetableCommandStack {
 
 	//La delegation permet de n'exposer que push et pop
-	private final LinkedList<ResetableCommand> stack = new LinkedList<>();
+	private final LinkedList<Command> stack = new LinkedList<>();
 	
-	public void push(ResetableCommand cmd) {
+	public void push(Command cmd) {
 		stack.addLast(cmd);
 	}
 
 	/**
 	 * @return null si la stack est vide
 	 */
-	public ResetableCommand pop() {
+	public Command pop() {
 		return stack.pollLast();
 	}
 
@@ -29,15 +30,9 @@ class ResetableCommandStack {
 	}
 
 	public void replay(Env env) {
-//		stack.stream().forEach(cmd->{
-//			cmd.resetCmd().execute(env);
-//		});	
 		stack.stream().forEachOrdered(cmd->{
 			cmd.execute(env);
 		});
-//		stack.stream().limit(stack.size()-1).forEachOrdered(cmd->{
-//			cmd.execute(env);
-//		});
 	}
 
 	public int size() {

@@ -1,15 +1,15 @@
 package cla.command.services;
 
-import cla.domain.Display;
 import cla.domain.Env;
-import cla.domain.carrots.Carrots;
+import cla.domain.carrots.CarrotRepository;
+import cla.domain.carrots.typing.Display;
 
 public class TestEnv implements Env {
 
-	private final Carrots carrots = new TestCarrots();
+	private final CarrotRepository carrots = new TestCarrots();
 	private final Display display = new TestDisplay();
 	
-	@Override public Carrots carrots() {
+	@Override public CarrotRepository carrots() {
 		return carrots;
 	}
 

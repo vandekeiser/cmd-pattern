@@ -4,10 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import cla.domain.carrots.Carrot;
-import cla.domain.carrots.Carrots;
+import cla.domain.carrots.CarrotRepository;
 
 //@NotThreadSafe //OK for tests
-class TestCarrots implements Carrots {
+class TestCarrots implements CarrotRepository {
 
 	private final Set<Carrot> carrots = new HashSet<>();
 	

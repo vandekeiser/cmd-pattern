@@ -3,7 +3,7 @@ package cla.domain.carrots;
 import java.util.Set;
 
 
-public interface Carrots {
+public interface CarrotRepository {
 
 	void addCarrot(Carrot carrot);
 

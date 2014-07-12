@@ -1,12 +1,13 @@
 package cla.domain;
 
-import cla.domain.carrots.Carrots;
+import cla.domain.carrots.CarrotRepository;
+import cla.domain.carrots.typing.Display;
 
 
 //aka ExecutionEnvironment
 public interface Env {
 
-	Carrots carrots();
+	CarrotRepository carrots();
 
 	Display display();
 
