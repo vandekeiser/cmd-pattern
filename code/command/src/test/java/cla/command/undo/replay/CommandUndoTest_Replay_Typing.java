@@ -67,7 +67,7 @@ public class CommandUndoTest_Replay_Typing extends BaseCommandTest {
 	 * redo --> "a"
 	 * undo --> ""
 	 */
-	@Test @Ignore public void undo_redo_undo() {
+	@Test public void undo_redo_undo() {
 		ReplayConversation commands = new ReplayConversation(env);
 		
 		commands.exec(CommandFactory.typeString("a"));
@@ -132,7 +132,7 @@ public class CommandUndoTest_Replay_Typing extends BaseCommandTest {
 	 * b    --> "b" 
 	 * undo --> ""
 	 */
-	@Test @Ignore public void typeA_typeB_undo_undo() {
+	@Test public void typeA_typeB_undo_undo() {
 		ReplayConversation commands = new ReplayConversation(env);
 		
 		System.out.println();System.out.println();
@@ -152,7 +152,7 @@ public class CommandUndoTest_Replay_Typing extends BaseCommandTest {
 		assertEquals("", env.display().displayed());
 	}
 	
-	@Test @Ignore public void complexConversation() {
+	@Test public void complexConversation() {
 		ReplayConversation commands = new ReplayConversation(env);
 		
 		commands.exec(CommandFactory.typeString("a"));
