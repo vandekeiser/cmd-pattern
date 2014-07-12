@@ -262,6 +262,52 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 		assertEquals("ab", env.display().displayed());
 	}
 	
+	@Test public void exec_exec_undo_undo() {
+		Conversation<C> commands = newConversation(env);
+		
+		commands.exec(typeString("a"));
+		assertEquals("a", env.display().displayed());
+		
+		System.out.println();System.out.println();
+		commands.exec(typeString("b"));
+		assertEquals("ab", env.display().displayed());
+		
+		System.out.println();System.out.println();
+		commands.undo();
+		assertEquals("a", env.display().displayed());
+		
+		System.out.println();System.out.println();
+		commands.undo();
+		assertEquals("", env.display().displayed());
+	}
+	
+	@Test public void exec_exec_undo_undo_redo_redo() {
+		Conversation<C> commands = newConversation(env);
+		
+		commands.exec(typeString("a"));
+		assertEquals("a", env.display().displayed());
+		
+		System.out.println();System.out.println();
+		commands.exec(typeString("b"));
+		assertEquals("ab", env.display().displayed());
+		
+		System.out.println();System.out.println();
+		commands.undo();
+		assertEquals("a", env.display().displayed());
+		
+		System.out.println();System.out.println();
+		commands.undo();
+		assertEquals("", env.display().displayed());
+		
+		System.out.println();System.out.println();
+		commands.redo();
+		assertEquals("a", env.display().displayed());
+		
+		System.out.println();System.out.println();
+		commands.redo();
+		assertEquals("ab", env.display().displayed());
+	}
+	
 	@Test public void failureCase() {
 		//TODO
 	}
