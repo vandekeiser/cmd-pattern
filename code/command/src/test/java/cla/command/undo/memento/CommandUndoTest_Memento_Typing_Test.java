@@ -5,7 +5,7 @@ import cla.command.undo.CommandUndoTest_Typing;
 import cla.command.undo.Conversation;
 import cla.domain.Env;
 
-public class CommandUndoTest_Memento_Typing extends CommandUndoTest_Typing<SnapshotableCommand> {
+public class CommandUndoTest_Memento_Typing_Test extends CommandUndoTest_Typing<SnapshotableCommand> {
 
 	@Override protected Conversation<SnapshotableCommand> newConversation(Env env) {
 		return new MementoConversation(env);

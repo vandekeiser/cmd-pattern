@@ -7,7 +7,7 @@ import org.junit.Test;
 import cla.command.BaseCommandTest;
 import cla.command.CommandFactory;
 
-public class CommandUndoTest_Compensation_Carrots extends BaseCommandTest {
+public class CommandUndoTest_Compensation_Carrots_Test extends BaseCommandTest {
 
 	@Test public void undo() {
 		CompensationConversation commands = new CompensationConversation(env);

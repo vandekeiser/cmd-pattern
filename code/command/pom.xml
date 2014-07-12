@@ -40,13 +40,16 @@
        </plugin>
 
        <plugin>
+       	   <groupId>org.apache.maven.plugins</groupId>
            <artifactId>maven-surefire-plugin</artifactId>
+           <version>2.17</version>
            <configuration>
            <jvm>${env.JAVA_HOME}/bin/java</jvm>
-           <!--if launching surefire generates incompatible class version error, tests haven't been launched yet (0 tests). We want to make the build fail in this case.-->
            <failIfNoTests>true</failIfNoTests>
            </configuration>
        </plugin>
+       <!--if launching surefire generates incompatible class version error, tests haven't been launched yet (0 tests). We want to make the build fail in this case.-->
+     
      </plugins>
    </build>
   

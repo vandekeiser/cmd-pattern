@@ -34,7 +34,7 @@ public class ReplayConversation implements Conversation<ResetableCommand> {
 		if( undoStack.size() > 0 ) {
 			ResetableCommand change = undoStack.pop() ;
             redoStack.push( change ) ;
-            reset() ;
+            reset();
             undoStack.replay(env);
         }
 	}

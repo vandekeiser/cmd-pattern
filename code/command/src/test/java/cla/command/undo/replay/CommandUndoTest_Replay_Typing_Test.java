@@ -5,7 +5,7 @@ import cla.command.undo.CommandUndoTest_Typing;
 import cla.command.undo.Conversation;
 import cla.domain.Env;
 
-public class CommandUndoTest_Replay_Typing extends CommandUndoTest_Typing<ResetableCommand> {
+public class CommandUndoTest_Replay_Typing_Test extends CommandUndoTest_Typing<ResetableCommand> {
 
 	@Override protected Conversation<ResetableCommand> newConversation(Env env) {
 		return new ReplayConversation(env);
