@@ -244,7 +244,6 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 	@Test public void exec_exec_undo_redo() {
 		Conversation<C> commands = newConversation(env);
 		
-		System.out.println();System.out.println();
 		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		

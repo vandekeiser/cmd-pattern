@@ -37,7 +37,7 @@ public class ReplayableList {
 	}
 	
 	@Override public String toString() {
-		return String.format("%s{resetables: %s}", resetables);
+		return String.format("%s{resetables: %s}", ReplayableList.class.getSimpleName(), resetables);
 	}
 
 }
