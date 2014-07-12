@@ -1,15 +1,15 @@
 package cla.command.undo.memento;
 
-import cla.command.undo.AbstractConversation;
+import cla.command.undo.AbstractConversationXXX;
 import cla.domain.Env;
 
 //Mieux testé que compensation..
-public class MementoConversation2 
-extends AbstractConversation<MementoStack, SnapshotableCommand, Restorable, Memento> {
+public class MementoConversationXXX 
+extends AbstractConversationXXX<MementoStack, SnapshotableCommand, Restorable, Memento> {
 
 	private MementoStack undoStack, redoStack;
 	
-	public MementoConversation2(Env env) {
+	public MementoConversationXXX(Env env) {
 		super(env);
 		this.undoStack = initUndoStack();//PAS BEAU!!! overridable in consrtuctor
 		this.redoStack = initRedoStack();//PAS BEAU!!! overridable in consrtuctor

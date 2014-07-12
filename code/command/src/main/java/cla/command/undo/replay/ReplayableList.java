@@ -1,7 +1,6 @@
 package cla.command.undo.replay;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import cla.domain.Env;
 

@@ -1,25 +1,26 @@
-package cla.command.undo.memento;
+package cla.command.undo;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import cla.command.BaseCommandTest;
-import cla.command.CommandFactory;
-import cla.command.undo.memento.MementoConversation2;
+import cla.command.Command;
+import cla.domain.Env;
 
-@Ignore
-public class CommandUndoTest_Memento2_Typing extends BaseCommandTest {
+public abstract class CommandUndoTest_Typing<C extends Command> extends BaseCommandTest {
 
+	protected abstract Conversation<C> newConversation(Env env);
+	protected abstract C typeString(String stringToType);
+	
 	/**
 	 * a    --> "a" 
 	 * undo --> ""
 	 */
 	@Test public void undo() {
-		MementoConversation2 commands = new MementoConversation2(env);
+		Conversation<C> commands = newConversation(env);
 		
-		commands.exec(CommandFactory.typeString("a"));
+		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
 		commands.undo();
@@ -32,9 +33,9 @@ public class CommandUndoTest_Memento2_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void undo_undo() {
-		MementoConversation2 commands = new MementoConversation2(env);
+		Conversation<C> commands = newConversation(env);
 		
-		commands.exec(CommandFactory.typeString("a"));
+		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
 		commands.undo();
@@ -50,9 +51,9 @@ public class CommandUndoTest_Memento2_Typing extends BaseCommandTest {
 	 * redo --> "a"
 	 */
 	@Test public void undo_redo() {
-		MementoConversation2 commands = new MementoConversation2(env);
+		Conversation<C> commands = newConversation(env);
 		
-		commands.exec(CommandFactory.typeString("a"));
+		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
 		commands.undo();
@@ -69,9 +70,9 @@ public class CommandUndoTest_Memento2_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void undo_redo_undo() {
-		MementoConversation2 commands = new MementoConversation2(env);
+		Conversation<C> commands = newConversation(env);
 		
-		commands.exec(CommandFactory.typeString("a"));
+		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
 		commands.undo();
@@ -86,7 +87,7 @@ public class CommandUndoTest_Memento2_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void nothingToUndo_Noop() {
-		MementoConversation2 commands = new MementoConversation2(env);
+		Conversation<C> commands = newConversation(env);
 		
 		commands.undo();
 		assertEquals("", env.display().displayed());
@@ -96,7 +97,7 @@ public class CommandUndoTest_Memento2_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void nothingToUndoUndo_Noop() {
-		MementoConversation2 commands = new MementoConversation2(env);
+		Conversation<C> commands = newConversation(env);
 		
 		commands.undo();
 		assertEquals("", env.display().displayed());
@@ -109,7 +110,7 @@ public class CommandUndoTest_Memento2_Typing extends BaseCommandTest {
 	 * redo --> ""
 	 */
 	@Test public void nothingToRedo_Noop() {
-		MementoConversation2 commands = new MementoConversation2(env);
+		Conversation<C> commands = newConversation(env);
 		
 		commands.redo();
 		assertEquals("", env.display().displayed());
@@ -119,7 +120,7 @@ public class CommandUndoTest_Memento2_Typing extends BaseCommandTest {
 	 * redo --> ""
 	 */
 	@Test public void nothingToRedoRedo_Noop() {
-		MementoConversation2 commands = new MementoConversation2(env);
+		Conversation<C> commands = newConversation(env);
 		
 		commands.redo();
 		assertEquals("", env.display().displayed());
@@ -134,14 +135,14 @@ public class CommandUndoTest_Memento2_Typing extends BaseCommandTest {
 	 * undo --> ""
 	 */
 	@Test public void typeA_typeB_undo_undo() {
-		MementoConversation2 commands = new MementoConversation2(env);
+		Conversation<C> commands = newConversation(env);
 		
 		System.out.println();System.out.println();
-		commands.exec(CommandFactory.typeString("a"));
+		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
 		System.out.println();System.out.println();
-		commands.exec(CommandFactory.typeString("b"));
+		commands.exec(typeString("b"));
 		assertEquals("ab", env.display().displayed());
 		
 		System.out.println();System.out.println();
@@ -154,9 +155,9 @@ public class CommandUndoTest_Memento2_Typing extends BaseCommandTest {
 	}
 	
 	@Test public void complexConversation() {
-		MementoConversation2 commands = new MementoConversation2(env);
+		Conversation<C> commands = newConversation(env);
 		
-		commands.exec(CommandFactory.typeString("a"));
+		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
 		System.out.println();System.out.println();
@@ -164,15 +165,15 @@ public class CommandUndoTest_Memento2_Typing extends BaseCommandTest {
 		assertEquals("", env.display().displayed());
 		
 		System.out.println();System.out.println();
-		commands.exec(CommandFactory.typeString("b"));
+		commands.exec(typeString("b"));
 		assertEquals("b", env.display().displayed());
 		
 		System.out.println();System.out.println();
-		commands.exec(CommandFactory.typeString("c"));
+		commands.exec(typeString("c"));
 		assertEquals("bc", env.display().displayed());
 		
 		System.out.println();System.out.println();
-		commands.exec(CommandFactory.typeString("d"));
+		commands.exec(typeString("d"));
 		assertEquals("bcd", env.display().displayed());
 		
 		System.out.println();System.out.println();
@@ -192,11 +193,11 @@ public class CommandUndoTest_Memento2_Typing extends BaseCommandTest {
 		assertEquals("b", env.display().displayed());
 		
 		System.out.println();System.out.println();
-		commands.exec(CommandFactory.typeString("e"));
+		commands.exec(typeString("e"));
 		assertEquals("be", env.display().displayed());
 		
 		System.out.println();System.out.println();
-		commands.exec(CommandFactory.typeString("f"));
+		commands.exec(typeString("f"));
 		assertEquals("bef", env.display().displayed());
 		
 		System.out.println();System.out.println();

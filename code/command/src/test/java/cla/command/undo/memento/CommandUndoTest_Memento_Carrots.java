@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import cla.command.BaseCommandTest;
 import cla.command.CommandFactory;
-import cla.command.undo.memento.MementoConversation;
 
 public class CommandUndoTest_Memento_Carrots extends BaseCommandTest {
 

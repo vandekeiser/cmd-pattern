@@ -1,9 +1,10 @@
 package cla.command.undo.compensation;
 
+import cla.command.undo.Conversation;
 import cla.domain.Env;
 
 
-public class CompensationConversation {
+public class CompensationConversation implements Conversation<CompensableCommand> {
 
 	private final Env env;
 	private final CompensableCommandStack undoStack, redoStack;
@@ -14,13 +15,13 @@ public class CompensationConversation {
 		this.redoStack = new CompensableCommandStack();
 	}
 
-	public void exec(CompensableCommand todo) {
+	@Override public void exec(CompensableCommand todo) {
 		todo.execute(this.env);
 		undoStack.push(todo);
 		redoStack.clear();
 	}
 
-	public void undo() {
+	@Override public void undo() {
 		CompensableCommand latestCmd = undoStack.pop();
 		if(latestCmd==null) return;//Dans une application quand la stack d'undo est vide, on ne fait rien (on ne crashe pas) 
 		latestCmd.compensate(env);
@@ -28,7 +29,7 @@ public class CompensationConversation {
 		redoStack.push(latestCmd);
 	}
 
-	public void redo() {
+	@Override public void redo() {
 		CompensableCommand latestCmd = redoStack.pop();
 		if(latestCmd==null) return; 
 		latestCmd.execute(env);

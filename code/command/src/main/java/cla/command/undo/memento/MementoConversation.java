@@ -1,9 +1,10 @@
 package cla.command.undo.memento;
 
+import cla.command.undo.Conversation;
 import cla.domain.Env;
 
 //Mieux testé que compensation..
-public class MementoConversation {
+public class MementoConversation implements Conversation<SnapshotableCommand> {
 
 	private final Env env;
 	private final MementoStack undoStack, redoStack;
@@ -14,7 +15,7 @@ public class MementoConversation {
 		this.redoStack = new MementoStack();
 	}
 
-	public void exec(SnapshotableCommand todo) {
+	@Override public void exec(SnapshotableCommand todo) {
 		System.out.println("ConversationMementoImpl/exec/START");
 		
 		Restorable snapshotBefore = todo.snapshot(env);
@@ -26,7 +27,7 @@ public class MementoConversation {
 		System.out.println("ConversationMementoImpl/exec/END/undoStack: " + undoStack);
 	}
 
-	public void undo() {
+	@Override public void undo() {
 		System.out.println("ConversationMementoImpl/undo/START:" + undoStack);
 		
 		Memento latestMemento = undoStack.pop();
@@ -41,7 +42,7 @@ public class MementoConversation {
 		System.out.println("ConversationMementoImpl/undo/END/undoStack: " + undoStack);
 	}
 
-	public void redo() {
+	@Override public void redo() {
 		System.out.println("ConversationMementoImpl/redo/START/redoStack: " + redoStack);
 		
 		Memento latestMemento = redoStack.pop();

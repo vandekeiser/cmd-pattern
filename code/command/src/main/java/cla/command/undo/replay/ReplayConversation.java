@@ -1,16 +1,10 @@
 package cla.command.undo.replay;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import cla.command.Command;
+import cla.command.undo.Conversation;
 import cla.domain.Env;
 
 //!!!!!!que se passe-t-il si une des cmds echoue??!!!
-public class ReplayConversation {
+public class ReplayConversation implements Conversation<ResetableCommand> {
 
 	private final Env env;
 	//private final Resets resets;
@@ -23,14 +17,14 @@ public class ReplayConversation {
 		this.redoList = new ReplayableList();
 	}
 
-	public void exec(ResetableCommand todo) {
+	@Override public void exec(ResetableCommand todo) {
 		todo.execute(this.env);
 		
 		undoList.addLast(todo); 
 		redoList.clear(); 
 	}
 
-	public void undo() {
+	@Override public void undo() {
 		undoList.reset(env);
 
 		ResetableCommand latestCmd = undoList.removeLast(); 
@@ -40,7 +34,7 @@ public class ReplayConversation {
 		undoList.replay(env);
 	}
 
-	public void redo() {
+	@Override public void redo() {
 		redoList.reset(env);
 
 		ResetableCommand latestCmd = redoList.peekLast(); 

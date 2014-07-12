@@ -3,12 +3,12 @@ package cla.command.undo;
 import cla.domain.Env;
 
 //Mieux testé que compensation..
-public abstract class AbstractConversation<STACK, CMD, CAPTURE, BEFOREAFTER> {
+public abstract class AbstractConversationXXX<STACK, CMD, CAPTURE, BEFOREAFTER> {
 
 	protected final Env env;
 	protected final STACK undoStack, redoStack;
 	
-	public AbstractConversation(Env env) {
+	public AbstractConversationXXX(Env env) {
 		this.env = env;
 		this.undoStack = initUndoStack();//PAS BEAU!!! overridable in consrtuctor
 		this.redoStack = initRedoStack();//PAS BEAU!!! overridable in consrtuctor
@@ -83,7 +83,7 @@ public abstract class AbstractConversation<STACK, CMD, CAPTURE, BEFOREAFTER> {
 	@Override public String toString() {
 		return String.format(
 				"%s{undoStack:%s, redoStack:%s}", 
-				AbstractConversation.class.getSimpleName(), 
+				AbstractConversationXXX.class.getSimpleName(), 
 				undoStack, 
 				redoStack
 		);
