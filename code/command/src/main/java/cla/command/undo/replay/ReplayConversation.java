@@ -7,12 +7,10 @@ import cla.domain.Env;
 public class ReplayConversation implements Conversation<ResetableCommand> {
 
 	private final Env env;
-	//private final Resets resets;
 	private final ReplayableList undoList, redoList;
 	
 	public ReplayConversation(Env env) {
 		this.env = env;
-		//this.resets = new Resets();
 		this.undoList = new ReplayableList();
 		this.redoList = new ReplayableList();
 	}

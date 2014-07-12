@@ -2,7 +2,6 @@ package cla.command.undo;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import cla.command.BaseCommandTest;
@@ -260,5 +259,9 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("ab", env.display().displayed());
+	}
+	
+	@Test public void failureCase() {
+		//TODO
 	}
 }
