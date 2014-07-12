@@ -1,13 +1,10 @@
-package cla.command.services;
+package cla.domain.carrots;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import cla.domain.carrots.Carrot;
-import cla.domain.carrots.CarrotRepository;
-
 //@NotThreadSafe //OK for tests
-class TestCarrots implements CarrotRepository {
+public class TestCarrotRepository implements CarrotRepository {
 
 	private final Set<Carrot> carrots = new HashSet<>();
 	

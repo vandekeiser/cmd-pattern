@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.After;
 import org.junit.Before;
 
-import cla.command.services.TestEnv;
 import cla.domain.Env;
+import cla.domain.TestEnv;
 
 public abstract class BaseCommandTest {
 

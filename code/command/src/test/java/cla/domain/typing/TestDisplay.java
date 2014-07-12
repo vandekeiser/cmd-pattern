@@ -1,10 +1,8 @@
-package cla.command.services;
+package cla.domain.typing;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import cla.domain.typing.Display;
 
 public class TestDisplay implements Display {
 
