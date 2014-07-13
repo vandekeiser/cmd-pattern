@@ -16,7 +16,6 @@ public abstract class AbstractTypedDao<T> extends Dao {
 	}
 	
 	public void persist(T entity) {
-		//return em.merge(entity);
 		em.persist(entity);
 	}
 	

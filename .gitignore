@@ -21,3 +21,4 @@ pf-cda*
 
 code/potatoes-jpa-app/potatoes-jpa-app/.settings/*
 code/potatoes-jpa-app/potatoes-jpa-app/target/*
+articles/*
