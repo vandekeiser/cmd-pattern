@@ -1,16 +1,8 @@
 package cla.command.undo.memento;
 
-import cla.command.Conversation;
-import cla.util.Stack;
+import cla.command.undo.compensation.AbstractConversation;
 
-public class MementoConversation implements Conversation<MementoableCommand> {
-
-	private final Stack<BeforeAfterMemento> undoStack, redoStack;
-	
-	public MementoConversation() {
-		this.undoStack = new Stack<BeforeAfterMemento>();
-		this.redoStack = new Stack<BeforeAfterMemento>();
-	}
+public class MementoConversation extends AbstractConversation<MementoableCommand, BeforeAfterMemento> {
 
 	@Override public void exec(MementoableCommand todo) {
 		Memento before = todo.snapshotOf();
@@ -36,13 +28,5 @@ public class MementoConversation implements Conversation<MementoableCommand> {
 		latestAfter.restore();
 		undoStack.push(latestMemento);
 	}
-
-	@Override public String toString() {
-		return String.format(
-				"%s{undoStack:%s, redoStack:%s}", 
-				MementoConversation.class.getSimpleName(), 
-				undoStack, 
-				redoStack
-		);
-	}
+	
 }
