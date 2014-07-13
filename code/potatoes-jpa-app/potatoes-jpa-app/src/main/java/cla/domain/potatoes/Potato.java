@@ -14,7 +14,7 @@ public class Potato implements Serializable {
     @GeneratedValue
     Long id;
 
-    @Column(nullable = false)
-    String name;
+//    @Column(nullable = false)
+//    String name;
 
 }
