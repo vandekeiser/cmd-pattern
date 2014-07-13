@@ -10,11 +10,14 @@ import javax.persistence.Id;
 @Entity
 public class Potato implements Serializable {
 
-    @Id
+	public Potato() {}
+    public Potato(String race) { this.race = race; }
+
+	@Id
     @GeneratedValue
     Long id;
 
-//    @Column(nullable = false)
-//    String name;
+    @Column//(nullable = false)
+    String race;
 
 }

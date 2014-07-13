@@ -22,7 +22,7 @@ import cla.domain.potatoes.Potato;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=Application.class)
 @Transactional
-public class PotatoJpaBasicTest {
+public class PotatoJpaTest {
 
 	@PersistenceContext
 	EntityManager em;
