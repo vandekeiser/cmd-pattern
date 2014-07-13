@@ -9,9 +9,9 @@ import cla.domain.carrots.CarrotCommandFactory;
 public class SimpleCommandTest_Carrots_Test extends BaseCommandTest {
 
 	@Test public void basicCommandExecution_addCarrot() {
-		Command addCarrot = CarrotCommandFactory.addCarrot(); 
-		addCarrot.execute(env);
-		assertEquals(1, env.carrotRepository().numberOfCarrots() );
+		Command addCarrot = CarrotCommandFactory.addCarrot(repo); 
+		addCarrot.execute();
+		assertEquals(1, repo.numberOfCarrots() );
 	}
 	
 }

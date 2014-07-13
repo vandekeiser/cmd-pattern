@@ -5,18 +5,22 @@ import static org.junit.Assert.assertEquals;
 import org.junit.After;
 import org.junit.Before;
 
-import cla.domain.Env;
-import cla.domain.TestEnv;
+import cla.domain.carrots.CarrotRepository;
+import cla.domain.carrots.TestCarrotRepository;
+import cla.domain.typing.Display;
+import cla.domain.typing.TestDisplay;
 
 public abstract class BaseCommandTest {
 
-	protected Env env;
+	protected CarrotRepository repo;
+	protected Display display;
 	
 	//--------setup/teardown VVVVVVVVV
 	@Before public void setup() {
-		env = new TestEnv();
-		assertEquals(0, env.carrotRepository().numberOfCarrots());//sanity check
-		assertEquals("", env.display().displayed());//sanity check
+		display = new TestDisplay();
+		repo = new TestCarrotRepository();
+		assertEquals(0, repo.numberOfCarrots());//sanity check
+		assertEquals("", display.displayed());//sanity check
 	}
 	
 	@After public void teardown() {

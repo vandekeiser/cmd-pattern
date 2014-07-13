@@ -9,8 +9,8 @@ import cla.domain.typing.TypingCommandFactory;
 public class SimpleCommandTest_Typing_Test extends BaseCommandTest {
 
 	@Test public void basicCommandExecution_typeString() {
-		Command typeString = TypingCommandFactory.typeString("a"); 
-		typeString.execute(env);
-		assertEquals("a", env.display().displayed() );
+		Command typeString = TypingCommandFactory.typeString(display, "a"); 
+		typeString.execute();
+		assertEquals("a", display.displayed() );
 	}
 }

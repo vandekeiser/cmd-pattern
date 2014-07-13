@@ -7,52 +7,52 @@ import org.junit.Test;
 import cla.command.BaseCommandTest;
 import cla.domain.carrots.CarrotCommandFactory;
 
-public class CommandUndoTest_Compensation_Carrots_Test extends BaseCommandTest {
+public class CommandUndoTest_Compensation_Carrots_Test extends BaseCommandTest  {
 
 	@Test public void undo() {
-		CompensationConversation commands = new CompensationConversation(env);
+		CompensationConversation commands = new CompensationConversation();
 		
-		commands.exec(CarrotCommandFactory.addCarrot());
-		assertEquals(1, env.carrotRepository().numberOfCarrots());
+		commands.exec(CarrotCommandFactory.addCarrot(repo));
+		assertEquals(1, repo.numberOfCarrots());
 		
 		commands.undo();
-		assertEquals(0, env.carrotRepository().numberOfCarrots());
+		assertEquals(0, repo.numberOfCarrots());
 	}
 	
 	@Test public void redo() {
-		CompensationConversation commands = new CompensationConversation(env);
+		CompensationConversation commands = new CompensationConversation();
 		
-		commands.exec(CarrotCommandFactory.addCarrot());
-		assertEquals(1, env.carrotRepository().numberOfCarrots());
+		commands.exec(CarrotCommandFactory.addCarrot(repo));
+		assertEquals(1, repo.numberOfCarrots());
 		
 		commands.undo();
-		assertEquals(0, env.carrotRepository().numberOfCarrots());
+		assertEquals(0, repo.numberOfCarrots());
 		
 		commands.redo();
-		assertEquals(1, env.carrotRepository().numberOfCarrots());
+		assertEquals(1, repo.numberOfCarrots());
 	}
 	
 	@Test public void redo_undo() {
-		CompensationConversation commands = new CompensationConversation(env);
+		CompensationConversation commands = new CompensationConversation();
 		
-		commands.exec(CarrotCommandFactory.addCarrot());
-		assertEquals(1, env.carrotRepository().numberOfCarrots());
+		commands.exec(CarrotCommandFactory.addCarrot(repo));
+		assertEquals(1, repo.numberOfCarrots());
 		
 		commands.undo();
-		assertEquals(0, env.carrotRepository().numberOfCarrots());
+		assertEquals(0, repo.numberOfCarrots());
 		
 		commands.redo();
-		assertEquals(1, env.carrotRepository().numberOfCarrots());
+		assertEquals(1, repo.numberOfCarrots());
 		
 		commands.undo();
-		assertEquals(0, env.carrotRepository().numberOfCarrots());
+		assertEquals(0, repo.numberOfCarrots());
 	}
 	
 
 	@Test public void nothingToUndo_Noop() {
-		CompensationConversation commands = new CompensationConversation(env);
+		CompensationConversation commands = new CompensationConversation();
 		commands.undo();
-		assertEquals(0, env.carrotRepository().numberOfCarrots());
+		assertEquals(0, repo.numberOfCarrots());
 	}
-	
+
 }

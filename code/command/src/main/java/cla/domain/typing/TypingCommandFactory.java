@@ -5,8 +5,8 @@ public enum TypingCommandFactory {
 
 	; //Using no-values enum to emulate top-level static class
 	
-	public static TypeString typeString(String stringToType) {
-		return new TypeString(stringToType);
+	public static TypeString typeString(Display display, String stringToType) {
+		return new TypeString(display, stringToType);
 	}
 
 }

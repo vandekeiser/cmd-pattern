@@ -1,24 +1,21 @@
 package cla.command.undo.memento;
 
 import cla.command.Conversation;
-import cla.domain.Env;
 
 //Mieux testé que compensation..
 public class MementoConversation implements Conversation<MementoableCommand> {
 
-	private final Env env;
 	private final BeforeAfterMementoStack undoStack, redoStack;
 	
-	public MementoConversation(Env env) {
-		this.env = env;
+	public MementoConversation() {
 		this.undoStack = new BeforeAfterMementoStack();
 		this.redoStack = new BeforeAfterMementoStack();
 	}
 
 	@Override public void exec(MementoableCommand todo) {
-		Memento before = todo.snapshotOf(env);
-		todo.execute(this.env);
-		Memento after = todo.snapshotOf(env);
+		Memento before = todo.snapshotOf();
+		todo.execute();
+		Memento after = todo.snapshotOf();
 		
 		undoStack.push(new BeforeAfterMemento(before, after));
 		redoStack.clear();
@@ -28,7 +25,7 @@ public class MementoConversation implements Conversation<MementoableCommand> {
 		BeforeAfterMemento latestMemento = undoStack.pop();
 		if(latestMemento==null) return;
 		Memento latestBefore = latestMemento.before;
-		latestBefore.restore(env);
+		latestBefore.restore();
 		redoStack.push(latestMemento);
 	}
 
@@ -36,7 +33,7 @@ public class MementoConversation implements Conversation<MementoableCommand> {
 		BeforeAfterMemento latestMemento = redoStack.pop();
 		if(latestMemento==null) return; 
 		Memento latestAfter = latestMemento.after;
-		latestAfter.restore(env);
+		latestAfter.restore();
 		undoStack.push(latestMemento);
 	}
 

@@ -5,26 +5,30 @@ import java.util.Set;
 import cla.command.undo.compensation.CompensableCommand;
 import cla.command.undo.memento.Memento;
 import cla.command.undo.memento.MementoableCommand;
-import cla.domain.Env;
 
 //TODO add generic add/remove/upd?
 public class AddCarrot implements CompensableCommand, MementoableCommand {
 
+	private final CarrotRepository repository;
 	private Carrot addedCarrot;
 	
-	@Override public void execute(Env env) {
+	public AddCarrot(CarrotRepository repository) {
+		this.repository = repository;
+	}
+	
+	@Override public void execute() {
 		addedCarrot = new Carrot();
-		env.carrotRepository().addCarrot(addedCarrot);
+		repository.addCarrot(addedCarrot);
 	}
 
-	@Override public void compensate(Env env) {
-		env.carrotRepository().removeCarrot(addedCarrot);
+	@Override public void compensate() {
+		repository.removeCarrot(addedCarrot);
 	}
 
-	@Override public Memento snapshotOf(Env env) {
+	@Override public Memento snapshotOf() {
 		//allCarrots() guarantees it does a defensive copy, otherwise we would have to do a defensive copy here
-		Set<Carrot> snapshot =  env.carrotRepository().getAllCarrots();
-		return (Env e) -> {e.carrotRepository().setAllCarrots(snapshot);};
+		Set<Carrot> snapshot =  repository.getAllCarrots();
+		return () -> {repository.setAllCarrots(snapshot);};
 	}
 	
 	@Override public String toString() {

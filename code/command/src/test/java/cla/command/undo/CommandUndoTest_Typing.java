@@ -8,11 +8,10 @@ import org.junit.Test;
 import cla.command.BaseCommandTest;
 import cla.command.Command;
 import cla.command.Conversation;
-import cla.domain.Env;
 
 public abstract class CommandUndoTest_Typing<C extends Command> extends BaseCommandTest {
 
-	protected abstract Conversation<C> newConversation(Env env);
+	protected abstract Conversation<C> newConversation();
 	protected abstract C typeString(String stringToType);
 	
 	/**
@@ -20,13 +19,13 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 	 * undo --> ""
 	 */
 	@Test public void undo() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.exec(typeString("a"));
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 	}
 	
 	/**
@@ -35,16 +34,16 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 	 * undo --> ""
 	 */
 	@Test public void undo_undo() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.exec(typeString("a"));
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 	}
 	
 	/**
@@ -53,16 +52,16 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 	 * redo --> "a"
 	 */
 	@Test public void undo_redo() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.exec(typeString("a"));
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 		
 		commands.redo();
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 	}
 	
 	/**
@@ -72,16 +71,16 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 	 * undo --> ""
 	 */
 	@Test public void undo_redo_undo() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.exec(typeString("a"));
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 		
 		commands.redo();
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 	}
 	
 
@@ -89,46 +88,46 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 	 * undo --> ""
 	 */
 	@Test public void nothingToUndo_Noop() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 	}
 	/**
 	 * undo --> ""
 	 * undo --> ""
 	 */
 	@Test public void nothingToUndoUndo_Noop() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 	}
 	
 	/**
 	 * redo --> ""
 	 */
 	@Test public void nothingToRedo_Noop() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.redo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 	}
 	/**
 	 * redo --> ""
 	 * redo --> ""
 	 */
 	@Test public void nothingToRedoRedo_Noop() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.redo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 		
 		commands.redo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 	}
 
 	/**
@@ -137,140 +136,140 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 	 * undo --> ""
 	 */
 	@Test public void typeA_typeB_undo_undo() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.exec(typeString("a"));
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.exec(typeString("b"));
-		assertEquals("ab", env.display().displayed());
+		assertEquals("ab", display.displayed());
 		
 		commands.undo();
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 	}
 	
 	@Test public void complexConversation() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.exec(typeString("a"));
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 		
 		commands.exec(typeString("b"));
-		assertEquals("b", env.display().displayed());
+		assertEquals("b", display.displayed());
 		
 		commands.exec(typeString("c"));
-		assertEquals("bc", env.display().displayed());
+		assertEquals("bc", display.displayed());
 		
 		commands.exec(typeString("d"));
-		assertEquals("bcd", env.display().displayed());
+		assertEquals("bcd", display.displayed());
 		
 		commands.undo();
-		assertEquals("bc", env.display().displayed());
+		assertEquals("bc", display.displayed());
 		
 		commands.redo();
-		assertEquals("bcd", env.display().displayed());
+		assertEquals("bcd", display.displayed());
 		
 		commands.undo();
-		assertEquals("bc", env.display().displayed());
+		assertEquals("bc", display.displayed());
 		
 		commands.undo();
-		assertEquals("b", env.display().displayed());
+		assertEquals("b", display.displayed());
 		
 		commands.exec(typeString("e"));
-		assertEquals("be", env.display().displayed());
+		assertEquals("be", display.displayed());
 		
 		commands.exec(typeString("f"));
-		assertEquals("bef", env.display().displayed());
+		assertEquals("bef", display.displayed());
 		
 		commands.undo();
-		assertEquals("be", env.display().displayed());
+		assertEquals("be", display.displayed());
 		
 		commands.undo();
-		assertEquals("b", env.display().displayed());
+		assertEquals("b", display.displayed());
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 		
 		commands.redo();
-		assertEquals("b", env.display().displayed());
+		assertEquals("b", display.displayed());
 		
 		commands.redo();
-		assertEquals("be", env.display().displayed());
+		assertEquals("be", display.displayed());
 		
 		commands.redo();
-		assertEquals("bef", env.display().displayed());
+		assertEquals("bef", display.displayed());
 		
 		commands.redo();
-		assertEquals("bef", env.display().displayed());
+		assertEquals("bef", display.displayed());
 		
 		commands.undo();
-		assertEquals("be", env.display().displayed());
+		assertEquals("be", display.displayed());
 		
 		commands.undo();
-		assertEquals("b", env.display().displayed());
+		assertEquals("b", display.displayed());
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 	}
 	
 	@Test public void exec_exec_undo_redo() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.exec(typeString("a"));
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.exec(typeString("b"));
-		assertEquals("ab", env.display().displayed());
+		assertEquals("ab", display.displayed());
 		
 		commands.undo();
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.redo();
-		assertEquals("ab", env.display().displayed());
+		assertEquals("ab", display.displayed());
 	}
 	
 	@Test public void exec_exec_undo_undo() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.exec(typeString("a"));
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.exec(typeString("b"));
-		assertEquals("ab", env.display().displayed());
+		assertEquals("ab", display.displayed());
 		
 		commands.undo();
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 	}
 	
 	@Test public void exec_exec_undo_undo_redo_redo() {
-		Conversation<C> commands = newConversation(env);
+		Conversation<C> commands = newConversation();
 		
 		commands.exec(typeString("a"));
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.exec(typeString("b"));
-		assertEquals("ab", env.display().displayed());
+		assertEquals("ab", display.displayed());
 		
 		commands.undo();
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.undo();
-		assertEquals("", env.display().displayed());
+		assertEquals("", display.displayed());
 		
 		commands.redo();
-		assertEquals("a", env.display().displayed());
+		assertEquals("a", display.displayed());
 		
 		commands.redo();
-		assertEquals("ab", env.display().displayed());
+		assertEquals("ab", display.displayed());
 	}
 	
 	@Test @Ignore public void failureCase() {

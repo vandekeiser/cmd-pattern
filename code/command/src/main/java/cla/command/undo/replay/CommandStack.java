@@ -3,7 +3,6 @@ package cla.command.undo.replay;
 import java.util.LinkedList;
 
 import cla.command.Command;
-import cla.domain.Env;
 
 class CommandStack {
 
@@ -29,9 +28,9 @@ class CommandStack {
 		return String.format("%s{stack:%s}", CommandStack.class.getSimpleName(), stack);
 	}
 
-	public void replay(Env env) {
+	public void replay() {
 		stack.stream().forEachOrdered(cmd->{
-			cmd.execute(env);
+			cmd.execute();
 		});
 	}
 
