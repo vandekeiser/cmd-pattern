@@ -8,16 +8,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Potato implements Serializable {
+public class Customer implements Serializable {
 
-	public Potato() {}
-    public Potato(String race) { this.race = race; }
+	public Customer() {}
+    public Customer(String name) { this.name = name; }
 
 	@Id
     @GeneratedValue
     Long id;
 
     @Column//(nullable = false)
-    String race;
+    String name;
 
 }

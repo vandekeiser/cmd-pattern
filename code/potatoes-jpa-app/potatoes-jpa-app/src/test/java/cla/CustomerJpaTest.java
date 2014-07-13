@@ -16,13 +16,13 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import cla.domain.potatoes.Potato;
+import cla.domain.potatoes.Customer;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=Application.class)
 @Transactional
-public class PotatoJpaTest {
+public class CustomerJpaTest {
 
 	@PersistenceContext
 	EntityManager em;
@@ -31,26 +31,26 @@ public class PotatoJpaTest {
 		assertEquals(1, 1);
 	}
 	
-	@Test public void createPotato_isInEm() {
-		Potato p = new Potato();
+	@Test public void createCustomer_isInEm() {
+		Customer p = new Customer();
 		em.persist(p);
 		assertThat(em.contains(p)).isTrue();
 	}
 	
-	@Test public void createPotato_isInEm2() {
-		Potato p = new Potato();
+	@Test public void createCustomer_isInEm2() {
+		Customer p = new Customer();
 		em.persist(p);
 		assertThat(em.contains(p)).isTrue();
 	}
 	
 	//---------setup/teardown
 	@Before public void setup() {
-		Query findAll = em.createQuery("from Potato");
-		List<?> allPotatoes = findAll.getResultList();
-		assertThat(allPotatoes).isEmpty();
+		Query findAll = em.createQuery("from Customer");
+		List<?> allCustomers = findAll.getResultList();
+		assertThat(allCustomers).isEmpty();
 	}
 	@Before public void teardown() {
-		Query deleteAll = em.createQuery("delete from Potato");
+		Query deleteAll = em.createQuery("delete from Customer");
 		deleteAll.executeUpdate();
 	}
 	
