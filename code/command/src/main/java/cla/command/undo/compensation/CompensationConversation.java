@@ -1,15 +1,16 @@
 package cla.command.undo.compensation;
 
 import cla.command.Conversation;
+import cla.util.Stack;
 
 
 public class CompensationConversation implements Conversation<CompensableCommand> {
 
-	private final CompensableCommandStack undoStack, redoStack;
+	private final Stack<CompensableCommand> undoStack, redoStack;
 	
 	public CompensationConversation() {
-		this.undoStack = new CompensableCommandStack();
-		this.redoStack = new CompensableCommandStack();
+		this.undoStack = new Stack<CompensableCommand>();
+		this.redoStack = new Stack<CompensableCommand>();
 	}
 
 	@Override public void exec(CompensableCommand todo) {
@@ -33,6 +34,11 @@ public class CompensationConversation implements Conversation<CompensableCommand
 	}
 
 	@Override public String toString() {
-		return String.format("%s{undoStack:%s, redoStack:%s}", CompensationConversation.class.getSimpleName(), undoStack, redoStack);
+		return String.format(
+				"%s{undoStack:%s, redoStack:%s}", 
+				CompensationConversation.class.getSimpleName(), 
+				undoStack, 
+				redoStack
+	    );
 	}
 }

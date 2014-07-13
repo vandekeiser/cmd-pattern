@@ -1,15 +1,15 @@
 package cla.command.undo.memento;
 
 import cla.command.Conversation;
+import cla.util.Stack;
 
-//Mieux testé que compensation..
 public class MementoConversation implements Conversation<MementoableCommand> {
 
-	private final BeforeAfterMementoStack undoStack, redoStack;
+	private final Stack<BeforeAfterMemento> undoStack, redoStack;
 	
 	public MementoConversation() {
-		this.undoStack = new BeforeAfterMementoStack();
-		this.redoStack = new BeforeAfterMementoStack();
+		this.undoStack = new Stack<BeforeAfterMemento>();
+		this.redoStack = new Stack<BeforeAfterMemento>();
 	}
 
 	@Override public void exec(MementoableCommand todo) {
