@@ -8,7 +8,9 @@ import cla.domain.typing.TypingCommandFactory;
 public class CommandUndoTest_Replay_Typing_Test extends CommandUndoTest_Typing<Command> {
 
 	@Override protected Conversation<Command> newConversation() {
-		return new ReplayConversation(()->{display.reset();});
+		return new ReplayConversation(()->{
+			display.reset();
+		});
 	}
 
 	@Override protected Command typeString(String stringToType) {
