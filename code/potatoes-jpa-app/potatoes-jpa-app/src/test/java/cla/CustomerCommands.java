@@ -5,7 +5,7 @@ import java.util.List;
 import cla.command.undo.memento.Memento;
 import cla.command.undo.memento.MementoableCommand;
 import cla.dao.CustomerDao;
-import cla.domain.potatoes.Customer;
+import cla.domain.customer.Customer;
 
 public class CustomerCommands {
 

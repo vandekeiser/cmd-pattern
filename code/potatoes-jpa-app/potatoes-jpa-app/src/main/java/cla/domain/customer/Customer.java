@@ -1,4 +1,4 @@
-package cla.domain.potatoes;
+package cla.domain.customer;
 
 import java.io.Serializable;
 

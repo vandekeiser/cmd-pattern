@@ -6,14 +6,14 @@ import javax.persistence.Query;
 
 import org.springframework.stereotype.Service;
 
-import cla.domain.potatoes.Customer;
+import cla.domain.customer.Customer;
 
 @Service
 public class CustomerDao extends AbstractTypedDao<Customer>{
 
 	public CustomerDao() { super(Customer.class); }
 
-	public List<Customer> potatoesOfRace(String name) {
+	public List<Customer> customersNamed(String name) {
 		Query findByName = em.createQuery("from Customer where name=:name");
 		findByName.setParameter("name", name);
 		List<?> soNamed = findByName.getResultList();
