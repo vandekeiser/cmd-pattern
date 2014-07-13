@@ -1,8 +1,6 @@
-package cla.command.undo.compensation;
+package cla.command.undo;
 
 import cla.command.Command;
-import cla.command.Conversation;
-import cla.util.Stack;
 
 /**
  * @author User

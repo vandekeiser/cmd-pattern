@@ -1,4 +1,4 @@
-package cla.util;
+package cla.command.undo;
 
 import java.util.LinkedList;
 import java.util.function.Consumer;

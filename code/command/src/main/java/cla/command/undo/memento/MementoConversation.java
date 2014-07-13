@@ -1,6 +1,6 @@
 package cla.command.undo.memento;
 
-import cla.command.undo.compensation.AbstractConversation;
+import cla.command.undo.AbstractConversation;
 
 public class MementoConversation extends AbstractConversation<MementoableCommand, BeforeAfterMemento> {
 

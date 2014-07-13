@@ -1,7 +1,7 @@
 package cla.command.undo.replay;
 
 import cla.command.Command;
-import cla.command.undo.compensation.AbstractConversation;
+import cla.command.undo.AbstractConversation;
 
 public class ReplayConversation extends AbstractConversation<Command, Command> {
 

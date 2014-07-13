@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import cla.command.BaseCommandTest;
 import cla.command.Command;
-import cla.command.Conversation;
 
 public abstract class CommandUndoTest_Typing<C extends Command> extends BaseCommandTest {
 

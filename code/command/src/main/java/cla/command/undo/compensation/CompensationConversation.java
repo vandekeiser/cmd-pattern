@@ -1,5 +1,7 @@
 package cla.command.undo.compensation;
 
+import cla.command.undo.AbstractConversation;
+
 
 
 public class CompensationConversation extends AbstractConversation<CompensableCommand, CompensableCommand> {

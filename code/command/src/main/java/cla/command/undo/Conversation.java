@@ -1,4 +1,6 @@
-package cla.command;
+package cla.command.undo;
+
+import cla.command.Command;
 
 
 public interface Conversation<C extends Command> {
