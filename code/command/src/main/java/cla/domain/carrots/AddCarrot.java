@@ -14,17 +14,17 @@ public class AddCarrot implements CompensableCommand, MementoableCommand {
 	
 	@Override public void execute(Env env) {
 		addedCarrot = new Carrot();
-		env.carrots().addCarrot(addedCarrot);
+		env.carrotRepository().addCarrot(addedCarrot);
 	}
 
 	@Override public void compensate(Env env) {
-		env.carrots().removeCarrot(addedCarrot);
+		env.carrotRepository().removeCarrot(addedCarrot);
 	}
 
 	@Override public Memento snapshotOf(Env env) {
 		//allCarrots() guarantees it does a defensive copy, otherwise we would have to do a defensive copy here
-		Set<Carrot> snapshot =  env.carrots().getAllCarrots();
-		return (Env e) -> {e.carrots().setAllCarrots(snapshot);};
+		Set<Carrot> snapshot =  env.carrotRepository().getAllCarrots();
+		return (Env e) -> {e.carrotRepository().setAllCarrots(snapshot);};
 	}
 	
 	@Override public String toString() {

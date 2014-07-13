@@ -10,7 +10,7 @@ public class TestEnv implements Env {
 	private final CarrotRepository carrots = new TestCarrotRepository();
 	private final Display display = new TestDisplay();
 	
-	@Override public CarrotRepository carrots() {
+	@Override public CarrotRepository carrotRepository() {
 		return carrots;
 	}
 

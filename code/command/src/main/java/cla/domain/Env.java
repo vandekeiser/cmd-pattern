@@ -7,7 +7,7 @@ import cla.domain.typing.Display;
 //aka ExecutionEnvironment
 public interface Env {
 
-	CarrotRepository carrots();
+	CarrotRepository carrotRepository();
 
 	Display display();
 

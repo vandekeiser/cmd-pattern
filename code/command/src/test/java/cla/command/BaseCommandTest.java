@@ -15,7 +15,7 @@ public abstract class BaseCommandTest {
 	//--------setup/teardown VVVVVVVVV
 	@Before public void setup() {
 		env = new TestEnv();
-		assertEquals(0, env.carrots().numberOfCarrots());//sanity check
+		assertEquals(0, env.carrotRepository().numberOfCarrots());//sanity check
 		assertEquals("", env.display().displayed());//sanity check
 	}
 	

@@ -13,46 +13,46 @@ public class CommandUndoTest_Compensation_Carrots_Test extends BaseCommandTest {
 		CompensationConversation commands = new CompensationConversation(env);
 		
 		commands.exec(CarrotCommandFactory.addCarrot());
-		assertEquals(1, env.carrots().numberOfCarrots());
+		assertEquals(1, env.carrotRepository().numberOfCarrots());
 		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals(0, env.carrotRepository().numberOfCarrots());
 	}
 	
 	@Test public void redo() {
 		CompensationConversation commands = new CompensationConversation(env);
 		
 		commands.exec(CarrotCommandFactory.addCarrot());
-		assertEquals(1, env.carrots().numberOfCarrots());
+		assertEquals(1, env.carrotRepository().numberOfCarrots());
 		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals(0, env.carrotRepository().numberOfCarrots());
 		
 		commands.redo();
-		assertEquals(1, env.carrots().numberOfCarrots());
+		assertEquals(1, env.carrotRepository().numberOfCarrots());
 	}
 	
 	@Test public void redo_undo() {
 		CompensationConversation commands = new CompensationConversation(env);
 		
 		commands.exec(CarrotCommandFactory.addCarrot());
-		assertEquals(1, env.carrots().numberOfCarrots());
+		assertEquals(1, env.carrotRepository().numberOfCarrots());
 		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals(0, env.carrotRepository().numberOfCarrots());
 		
 		commands.redo();
-		assertEquals(1, env.carrots().numberOfCarrots());
+		assertEquals(1, env.carrotRepository().numberOfCarrots());
 		
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals(0, env.carrotRepository().numberOfCarrots());
 	}
 	
 
 	@Test public void nothingToUndo_Noop() {
 		CompensationConversation commands = new CompensationConversation(env);
 		commands.undo();
-		assertEquals(0, env.carrots().numberOfCarrots());
+		assertEquals(0, env.carrotRepository().numberOfCarrots());
 	}
 	
 }

@@ -11,7 +11,7 @@ public class SimpleCommandTest_Carrots_Test extends BaseCommandTest {
 	@Test public void basicCommandExecution_addCarrot() {
 		Command addCarrot = CarrotCommandFactory.addCarrot(); 
 		addCarrot.execute(env);
-		assertEquals(1, env.carrots().numberOfCarrots() );
+		assertEquals(1, env.carrotRepository().numberOfCarrots() );
 	}
 	
 }

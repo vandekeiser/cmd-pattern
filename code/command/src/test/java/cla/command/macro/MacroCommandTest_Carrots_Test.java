@@ -13,7 +13,7 @@ public class MacroCommandTest_Carrots_Test extends BaseCommandTest {
 	@Test public void macro() {
 		Command addCarrot = CarrotCommandFactory.addCarrot(); 
 		addCarrot.execute(env);
-		assertEquals(1, env.carrots().numberOfCarrots());
+		assertEquals(1, env.carrotRepository().numberOfCarrots());
 	}
 	
 }
