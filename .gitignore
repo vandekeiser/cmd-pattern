@@ -19,6 +19,6 @@ pf-cda*
 **/target/**
 **/.settings
 
-code/potatoes-jpa-app/potatoes-jpa-app/.settings/*
-code/potatoes-jpa-app/potatoes-jpa-app/target/*
+code/customer-app/customer-app/.settings/*
+code/customer-app/customer-app/target/*
 articles/*
