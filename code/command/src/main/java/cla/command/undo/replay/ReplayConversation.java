@@ -18,18 +18,18 @@ public class ReplayConversation extends AbstractConversation<Command, Command> {
 	}
 
 	@Override public void undo() {
-		Command change = undoStack.pop() ;
-		if(change==null) return;
-        redoStack.push( change );
+		Command latestCmd = undoStack.pop() ;
+		if(latestCmd==null) return;
+        redoStack.push(latestCmd);
         reset.execute();
         undoStack.forEachFifo(cmd->cmd.execute());
 	}
 
 	@Override public void redo() {
-		Command change = redoStack.pop() ;
-		if(change==null) return;
-		change.execute();
-        undoStack.push( change ) ; 
+		Command latestCmd = redoStack.pop() ;
+		if(latestCmd==null) return;
+		latestCmd.execute();
+        undoStack.push( latestCmd ) ; 
 	}
 	
 }
