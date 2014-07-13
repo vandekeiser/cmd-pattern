@@ -25,7 +25,7 @@ public class AddCarrot implements CompensableCommand, MementoableCommand {
 		repository.removeCarrot(addedCarrot);
 	}
 
-	@Override public Memento snapshotOf() {
+	@Override public Memento takeSnapshot() {
 		//allCarrots() guarantees it does a defensive copy, otherwise we would have to do a defensive copy here
 		Set<Carrot> snapshot =  repository.getAllCarrots();
 		return () -> {repository.setAllCarrots(snapshot);};

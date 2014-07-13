@@ -27,10 +27,6 @@ public class Stack<T> {
 		stack.stream().forEachOrdered(action);
 	}
 
-	public int size() {
-		return stack.size();
-	}
-
 	@Override public String toString() {
 		return stack.toString();
 	}

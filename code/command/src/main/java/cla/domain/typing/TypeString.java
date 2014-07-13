@@ -25,7 +25,7 @@ public class TypeString implements CompensableCommand, MementoableCommand {
 		display.unappend();
 	}
 
-	@Override public Memento snapshotOf() {
+	@Override public Memento takeSnapshot() {
 		final List<String> snapshot =  display.getState();//snapshot is a defensive copy
 		return () -> display.setState(snapshot);
 	}

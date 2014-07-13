@@ -5,9 +5,9 @@ import cla.command.undo.compensation.AbstractConversation;
 public class MementoConversation extends AbstractConversation<MementoableCommand, BeforeAfterMemento> {
 
 	@Override public void exec(MementoableCommand todo) {
-		Memento before = todo.snapshotOf();
+		Memento before = todo.takeSnapshot();
 		todo.execute();
-		Memento after = todo.snapshotOf();
+		Memento after = todo.takeSnapshot();
 		
 		undoStack.push(new BeforeAfterMemento(before, after));
 		redoStack.clear();

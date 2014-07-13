@@ -19,15 +19,9 @@ public abstract class AbstractConversation<C extends Command, S> implements Conv
 		this.redoStack = new Stack<S>();
 	}
 
-	@Override public abstract void exec(C todo);
-
-	@Override public abstract void undo();
-
-	@Override public abstract void redo();
-
 	@Override public String toString() {
 		return String.format(
-				"%s{undoStack:%s, redoList:%s}", 
+				"%s{undoStack:%s, redoStack:%s}", 
 				getClass().getSimpleName(), 
 				undoStack, 
 				redoStack
