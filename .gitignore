@@ -12,3 +12,12 @@ workspace/*
 
 Source Phile*
 pf-cda*
+
+#glob doesn't work??
+**/.settings/**
+**/.settings/**
+**/target/**
+**/.settings
+
+code/potatoes-jpa-app/potatoes-jpa-app/.settings/*
+code/potatoes-jpa-app/potatoes-jpa-app/target/*
