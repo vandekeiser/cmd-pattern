@@ -8,3 +8,8 @@ compensation: pass assez testé cf. inversion pollLast-->first sans echec test..
 	(application mm modif que pour fixzer memento)
 
 
+
+-----conversation------
+2.2.1. Embedding A Flow On A Page
+
+By default Web Flow does a client-side redirect upon entering every view state. That makes it impossible to embed a flow on a page or within a modal dialog and execute more than one view state without causing a full-page refresh. Web Flow now supports launching a flow in "embedded" mode. In this mode a flow can transition to other view states without a client-side redirect during Ajax requests. See Section 11.7, “Embedding A Flow On A Page” and Section 13.8, “Embedding a Flow On a Page”. 
