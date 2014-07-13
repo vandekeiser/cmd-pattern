@@ -18,7 +18,9 @@ import cla.command.undo.memento.MementoableCommand;
 import cla.dao.PotatoDao;
 import cla.domain.potatoes.Potato;
 
-
+//-FUCK JPA! essayer JDO2? 
+//-clone on persist/xxx?
+//-I always use a request scoped session and that makes the undo pretty easy: just throw an exception and the transaction gets rolled back immediately.
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=Application.class)
 @Transactional
