@@ -22,11 +22,9 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 	@Test public void undo() {
 		Conversation<C> commands = newConversation(env);
 		
-		System.out.println();System.out.println();
 		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("", env.display().displayed());
 	}
@@ -59,11 +57,9 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 		
 		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
-		System.out.println();System.out.println();
 		
 		commands.undo();
 		assertEquals("", env.display().displayed());
-		System.out.println();System.out.println();
 		
 		commands.redo();
 		assertEquals("a", env.display().displayed());
@@ -143,19 +139,15 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 	@Test public void typeA_typeB_undo_undo() {
 		Conversation<C> commands = newConversation(env);
 		
-		System.out.println();System.out.println();
 		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.exec(typeString("b"));
 		assertEquals("ab", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("a", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("", env.display().displayed());
 	}
@@ -166,83 +158,63 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.exec(typeString("b"));
 		assertEquals("b", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.exec(typeString("c"));
 		assertEquals("bc", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.exec(typeString("d"));
 		assertEquals("bcd", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("bc", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("bcd", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("bc", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("b", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.exec(typeString("e"));
 		assertEquals("be", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.exec(typeString("f"));
 		assertEquals("bef", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("be", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("b", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("b", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("be", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("bef", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("bef", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("be", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("b", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("", env.display().displayed());
 	}
@@ -253,15 +225,12 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.exec(typeString("b"));
 		assertEquals("ab", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("a", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("ab", env.display().displayed());
 	}
@@ -272,15 +241,12 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.exec(typeString("b"));
 		assertEquals("ab", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("a", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("", env.display().displayed());
 	}
@@ -291,23 +257,18 @@ public abstract class CommandUndoTest_Typing<C extends Command> extends BaseComm
 		commands.exec(typeString("a"));
 		assertEquals("a", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.exec(typeString("b"));
 		assertEquals("ab", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("a", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.undo();
 		assertEquals("", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("a", env.display().displayed());
 		
-		System.out.println();System.out.println();
 		commands.redo();
 		assertEquals("ab", env.display().displayed());
 	}

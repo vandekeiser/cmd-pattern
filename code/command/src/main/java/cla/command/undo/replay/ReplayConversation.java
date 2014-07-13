@@ -19,21 +19,12 @@ public class ReplayConversation implements Conversation<Command> {
 	}
 
 	@Override public void exec(Command todo) {
-		System.out.println("ReplayConversation/exec/START/undoStack: " + undoStack);
-		System.out.println("ReplayConversation/exec/START/redoStack: " + redoStack);
-		
 		todo.execute(this.env);
 		undoStack.push(todo);
 		redoStack.clear();
-		
-		System.out.println("ReplayConversation/exec/END/undoStack: " + undoStack);
-		System.out.println("ReplayConversation/exec/END/redoList: " + redoStack);
 	}
 
 	@Override public void undo() {
-		System.out.println("ReplayConversation/undo/START/undoStack: " + undoStack);
-		System.out.println("ReplayConversation/undo/START/redoList: " + redoStack);
-
 		if( undoStack.size() > 0 ) {
 			Command change = undoStack.pop() ;
             redoStack.push( change ) ;
@@ -43,9 +34,6 @@ public class ReplayConversation implements Conversation<Command> {
 	}
 
 	@Override public void redo() {
-		System.out.println("ReplayConversation/redo/START/undoStack: " + undoStack);
-		System.out.println("ReplayConversation/redo/START/redoList: " + redoStack);
-
 		if( redoStack.size() > 0 ) {
 			Command change = redoStack.pop() ;
 			change.execute(env) ;
