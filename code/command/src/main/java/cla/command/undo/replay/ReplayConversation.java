@@ -4,7 +4,6 @@ import cla.command.Command;
 import cla.command.Conversation;
 import cla.util.Stack;
 
-//!!!!!!que se passe-t-il si une des cmds echoue??!!!
 public class ReplayConversation implements Conversation<Command> {
 
 	private final Command reset;
