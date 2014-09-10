@@ -3,7 +3,7 @@ package cla.command.undo.replay;
 import cla.command.Command;
 import cla.command.undo.CommandUndoTest_Typing;
 import cla.command.undo.Conversation;
-import cla.domain.typing.TypingCommandFactory;
+import cla.domain.typing.TypeString;
 
 public class CommandUndoTest_Replay_Typing_Test extends CommandUndoTest_Typing<Command> {
 
@@ -14,7 +14,7 @@ public class CommandUndoTest_Replay_Typing_Test extends CommandUndoTest_Typing<C
 	}
 
 	@Override protected Command typeString(String stringToType) {
-		return TypingCommandFactory.typeString(display, stringToType);
+		return new TypeString(display, stringToType);
 	}
 	
 }

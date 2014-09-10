@@ -6,7 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 
 import cla.domain.typing.Display;
-import cla.domain.typing.TestDisplay;
 
 public abstract class BaseCommandTest {
 
@@ -14,7 +13,7 @@ public abstract class BaseCommandTest {
 	
 	//--------setup/teardown VVVVVVVVV
 	@Before public void setup() {
-		display = new TestDisplay();
+		display = new Display();
 		assertEquals("", display.displayed());//sanity check
 	}
 	

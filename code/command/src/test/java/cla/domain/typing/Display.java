@@ -4,34 +4,41 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TestDisplay implements Display {
+public class Display {
 
 	private final LinkedList<String> displayElements = new LinkedList<>();
 	
-	@Override public void append(String stringToAppend) {
+	public void append(String stringToAppend) {
 		displayElements.addLast(stringToAppend);
 	}
 
-	@Override public void unappend() {
+	public void unappend() {
 		displayElements.removeLast();
 	}
 
-	@Override public String displayed() {
+	public String displayed() {
 		StringBuilder sb = new StringBuilder();
 		for(String s : displayElements) sb.append(s);
 		return sb.toString();
 	}
 
-	@Override public List<String> getState() {
+	/**
+	 * @return A defensive copy of the current display state.
+	 */
+	public List<String> getState() {
 		return new ArrayList<String>(displayElements);
 	}
 
-	@Override public void setState(List<String> newState) {
+	/**
+	 * Sets display state to a defensive copy of state.
+	 * @param state
+	 */
+	public void setState(List<String> newState) {
 		displayElements.clear();
 		displayElements.addAll(newState);
 	}
 
-	@Override public void reset() {
+	public void reset() {
 		displayElements.clear();
 	}
 
