@@ -1,0 +1,36 @@
+Pattern Command: Undo, variations Compensation/Snapshot/Replay
+
+-------INTRO-------
+Tout le monde a au moins entendu parler du pattern Command, car c'est un des patterns du GOF. 
+***schema UML a pomper***
+L'instanciation d'une Commande capture l'ensemble des données permettant d'exécuter un traitement. Ce pattern permet de découpler l'instantiation d'un traitement de son exécution. On introduit souvent ce degré d'abstraction lorsque les lieux d'instanciation et d'exécution d'un traitement sont éloignés, dans l'espace ou dans le temps. 
+
+-------Le pattern Command pour résoudre le problème de l'éloignement spatial ou temporel-------
+L'éloignement en question est celui entre le point (spatial ou temporel) de création de la commande, qui est le seul à connaître les données nécessaires à l'exécution d'un traitement, et le point d'exécution de la commande, qui est le seul à connaître le contexte/scope/ressources techniques nécessaires à son exécution.
+
+Dans le cas spatial, la Commande est typiquement créée dans un client, où son constructeur capture les données propres à une transaction. La commande (et les données qu'elle embarque alors) est ensuite sérialisée, puis envoyée à un serveur comprenant un environnement d'exécution. Dans ce cas, la méthode execute prend un paramètre ExecutionEnvironment, interface définissant des méthodes getXXXService. Les services techniques XXX, de persistance, query, WS, ou autres, sont eux aussi des interfaces utilisées par l'implémentation de chaque commande. Quand le serveur reçoit la commande, il la désérialise, et invoque sa méthode execute en lui passant une implémentation d'ExecutionEnvironment contenant les services techniques qu'il est le seul à pouvoir fournir
+Exemple basique pour un commande CRUD: l'ExecutionEnvironment contient un Repository implémenté par un EntityManager: ***schema UML***
+
+Dans le cas temporel, le problème est différent: la commande peut être exécutée tout de suite, mais elle doit pouvoir être annulée ou rejouée à un instant ultérieur et indéfini. Il est donc nécessaire qu'un __contexte__ maintienne une référence vers la commande exécutée. Ce type de commande est typiquement exécuté dans le même environnement que celui où la commande a été instanciée, et la méthode execute n'a donc pas besoin d'un paramétre permettant d'abstraire l'ExecutionEnvironnement (les ressources nécessaires à l'exécution peuvent être passées dès l'instanciation)
+: ***schema UML***
+
+Il est évidemment possible de cumuler les deux difficultés, auquel cas le serveur devra à la fois fournir un ExecutionEnvironment, et maintenir des références vers les commandes déjà exécutées (un EJB Stateful permet par exemple de remplir ces deux fonctionnalités). Puisque ce post concerne l'Undo, on simplifiera cependant en supposant que les commandes sont locales (intra-JVM, sans remoting)
+
+-------L'Undo-------
+Tout le monde connaît la fonctionnalité d'Undo/Redo, souvent lié à une action utilisateur Ctrl+Z/Ctrl+Y. Elle n'est cependant pas triviale à implémenter, car les implémentations possibles dépendent du type de commande (on donne des exemples plus loin). On propose ici trois variations du pattern, plus ou moins adaptées selon le type de commande. 
+
+-------The codez-------
+Le code est disponible sur Github: __https://github.com/vandekeiser/cmd-pattern__
+Le répertoire code est organisé en 2 projets maven:
+-__command__ contient le framework d'undo par commandes. Les tests junit implémentent 1 type de commande, __Typing__, qui représente la saisie d'un string sur un affichage (Display). Naturellement, undoer une saisie revient à l'effacer, et le redoer revient à le réafficher.
+-__customer-app__ est une mini-application utilisatrice illustrant l'utilisation du framework. Il s'agit d'un CRUD JPA implémenté avec SpringBoot/Hibernate/H2. Ici undoer un create revient à faire un remove, etc
+
+--------------Variations de L'Undo par Command--------------
+Venons-en au coeur du sujet: quelles sont les implémentation possibles? Comment les implémenter? Comment les choisir pour un type de commande particulier?
+
+-------Variation: Compensation Undo-------
+
+
+-------Variation: Replay Undo-------
+
+-------Variation: Snapshot Undo-------
