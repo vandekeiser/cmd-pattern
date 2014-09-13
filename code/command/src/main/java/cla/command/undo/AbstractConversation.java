@@ -3,8 +3,6 @@ package cla.command.undo;
 import cla.command.Command;
 
 /**
- * @author User
- *
  * @param <C> Command type
  * @param <S> Stack type
  */
