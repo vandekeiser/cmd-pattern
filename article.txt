@@ -1,34 +1,88 @@
 Pattern Command: Undo, variations Compensation/Snapshot/Replay
 
 -------INTRO-------
-Tout le monde a au moins entendu parler du pattern Command, car c'est un des patterns du GOF. 
-***schema UML a pomper***
-L'instanciation d'une Commande capture l'ensemble des données permettant d'exécuter un traitement. Ce pattern permet de découpler l'instantiation d'un traitement de son exécution. On introduit souvent ce degré d'abstraction lorsque les lieux d'instanciation et d'exécution d'un traitement sont éloignés, dans l'espace ou dans le temps. 
+La dernière fois je vous avez parlé de __quelques patterns d'implémentation avec les enums java__ et en particulier de l'application des enums au Domain Driven Design grâce à l'inversion de dépendance. Continuons notre révision des bases avec le pattern Command. 
 
--------Le pattern Command pour résoudre le problème de l'éloignement spatial ou temporel-------
+-------0/Généralités
+Selon le GOF, l'intention du pattern Command, est d'"encapsuler une requête comme un objet, autorisant ainsi le paramétrage des clients par différentes requêtes, file d'attente et récapitulatifs de requêtes, et de plus permettant la révision des opérations". Le GOF fait ici allusion à deux utilisations des commandes: découpler la création d'une reqête de son exécution, et implémenter l'undo. Ce dernier point est le sujet principal de ce post.
+
+La structure est la suivante:
+***schema UML 1***
+Lors de l'instanciation d'une ConcreteCommand par le Client, celle-ci capture l'état permettant de d'invoquer une action paramétrée. Lorsque l'Invocator déclenche une Command, la ConcreteCommand invoque le Receptor en passant l'état stocké en paramètre. Ce pattern permet de découpler l'instanciation d'un traitement de son exécution. On introduit souvent ce degré d'abstraction lorsque les lieux d'instanciation et d'exécution d'un traitement sont éloignés, dans l'espace ou dans le temps. 
+
+-------1/Le pattern Command pour résoudre le problème de l'éloignement spatial ou temporel-------
 L'éloignement en question est celui entre le point (spatial ou temporel) de création de la commande, qui est le seul à connaître les données nécessaires à l'exécution d'un traitement, et le point d'exécution de la commande, qui est le seul à connaître le contexte/scope/ressources techniques nécessaires à son exécution.
 
-Dans le cas spatial, la Commande est typiquement créée dans un client, où son constructeur capture les données propres à une transaction. La commande (et les données qu'elle embarque alors) est ensuite sérialisée, puis envoyée à un serveur comprenant un environnement d'exécution. Dans ce cas, la méthode execute prend un paramètre ExecutionEnvironment, interface définissant des méthodes getXXXService. Les services techniques XXX, de persistance, query, WS, ou autres, sont eux aussi des interfaces utilisées par l'implémentation de chaque commande. Quand le serveur reçoit la commande, il la désérialise, et invoque sa méthode execute en lui passant une implémentation d'ExecutionEnvironment contenant les services techniques qu'il est le seul à pouvoir fournir
-Exemple basique pour un commande CRUD: l'ExecutionEnvironment contient un Repository implémenté par un EntityManager: ***schema UML***
+----Cas spatial: commande remote-------
+Dans le cas spatial, la commande est typiquement créée dans un client et exécutée dans un serveur:
+***schema UML 2***
+-Le constructeur de la commande concrète capture les données propres à une transaction client. 
+-La méthode execute de la commande concrète invoque un ou plusieurs récepteurs abstraits (ex: Repository). 
+-Pour ce faire, elle récupère les récepteurs abstraits dans l'environment d'exécution abstrait (ex: ExecutionEnvironment.getRepository
+-Les récepteurs concrets (ex: DAO implements Repository) et l'environnement d'exécution concret sont implémentés côté serveur
+-Côté serveur, la commande est reçue par le RemoteInvocator
+-Le RemoteInvocator instancie un ConcreteExecutionEnvironment, en passant à son constructeur les ressources techniques nécessaires (EntityManager, ...). Le RemoteInvocator peut par exemple être un EJB @Remote.
+-Le ConcreteExecutionEnvironment construit et agrège les récepteurs concrets (DAO, ...) en utilisant les ressources fournies par le RemoteInvocator (EntityManager, ...)
+-Le RemoteInvocator invoque la méthode execute de la commande en passant le ConcreteExecutionEnvironment
 
-Dans le cas temporel, le problème est différent: la commande peut être exécutée tout de suite, mais elle doit pouvoir être annulée ou rejouée à un instant ultérieur et indéfini. Il est donc nécessaire qu'un __contexte__ maintienne une référence vers la commande exécutée. Ce type de commande est typiquement exécuté dans le même environnement que celui où la commande a été instanciée, et la méthode execute n'a donc pas besoin d'un paramétre permettant d'abstraire l'ExecutionEnvironnement (les ressources nécessaires à l'exécution peuvent être passées dès l'instanciation)
+----Cas temporel: l'undo-------
+Dans le cas temporel, le problème est différent: la commande peut être exécutée tout de suite, mais elle doit pouvoir être annulée ou rejouée à un instant ultérieur et indéfini. Comme le dit le GOF, "un objet Commande peut avoir une durée de vie indépendante de la requête originelle" Il est donc nécessaire qu'un __contexte__ maintienne une référence vers la commande exécutée. Ce type de commande est typiquement exécuté dans le même environnement que celui où la commande a été instanciée, et la méthode execute n'a donc pas besoin d'un paramétre ExecutionEnvironnement (les ressources nécessaires à l'exécution peuvent être passées dès l'instanciation)
 : ***schema UML***
 
-Il est évidemment possible de cumuler les deux difficultés, auquel cas le serveur devra à la fois fournir un ExecutionEnvironment, et maintenir des références vers les commandes déjà exécutées (un EJB Stateful permet par exemple de remplir ces deux fonctionnalités). Puisque ce post concerne l'Undo, on simplifiera cependant en supposant que les commandes sont locales (intra-JVM, sans remoting)
+----Cas spacial et temporel-------
+Il est évidemment possible de cumuler les deux difficultés, auquel cas le serveur devra à la fois fournir un ExecutionEnvironment, et maintenir des références vers les commandes déjà exécutées (un EJB Stateful permet par exemple de remplir ces deux fonctionnalités). Puisque ce post concerne l'undo, on simplifiera cependant en supposant que les commandes sont locales (intra-JVM, sans remoting)
 
--------L'Undo-------
-Tout le monde connaît la fonctionnalité d'Undo/Redo, souvent lié à une action utilisateur Ctrl+Z/Ctrl+Y. Elle n'est cependant pas triviale à implémenter, car les implémentations possibles dépendent du type de commande (on donne des exemples plus loin). On propose ici trois variations du pattern, plus ou moins adaptées selon le type de commande. 
+-------2/L'Undo-------
+La fonctionnalité d'undo/redo est fréquemment demandée pour une IHM car l'être humain se trompe. Elle est souvent lié à une action utilisateur Ctrl+Z/Ctrl+Y. Elle n'est cependant pas triviale à implémenter, car les implémentations possibles dépendent du type de commande (on donne des exemples plus loin). On propose ici trois variations du pattern, plus ou moins adaptées selon le type de commande. 
 
--------The codez-------
+-------2/a/ The codez-------
 Le code est disponible sur Github: __https://github.com/vandekeiser/cmd-pattern__
-Le répertoire code est organisé en 2 projets maven:
--__command__ contient le framework d'undo par commandes. Les tests junit implémentent 1 type de commande, __Typing__, qui représente la saisie d'un string sur un affichage (Display). Naturellement, undoer une saisie revient à l'effacer, et le redoer revient à le réafficher.
--__customer-app__ est une mini-application utilisatrice illustrant l'utilisation du framework. Il s'agit d'un CRUD JPA implémenté avec SpringBoot/Hibernate/H2. Ici undoer un create revient à faire un remove, etc
 
---------------Variations de L'Undo par Command--------------
+Le répertoire code est organisé en 2 projets maven:
+	-__command__ contient le framework d'undo par commandes. Les tests junit implémentent 1 type de commande, __Typing__, qui représente la saisie d'un string sur un affichage (Display). 
+	Il comprend une même suite de tests appliquée aux 3 variations.
+
+	-__customer-app__ est une mini-application utilisatrice illustrant l'utilisation du framework. Il s'agit d'un CRUD JPA implémenté avec SpringBoot/JPA/H2. Il comprend quelques tests, ce qui serait insuffisant pour une vraie application.
+
+
+--------------2/b Variations de L'Undo par Command--------------
 Venons-en au coeur du sujet: quelles sont les implémentation possibles? Comment les implémenter? Comment les choisir pour un type de commande particulier?
 
+Puisqu'on se place dans le cas simple sans ExecutionEnvironment, l'interface Command est la suivante:
+++++++++++++++
+public interface Command {
+	void execute();	
+}
+++++++++++++++
+
+Introduisons la conversation, qui est le scope dans lequel on execute, annule, et rejoue des commandes:
+++++++++++++++
+public interface Conversation<C extends Command> {
+	void exec(C cmd);
+	void undo();
+	void redo();
+}
+++++++++++++++
+Le nom conversation souligne le fait qu'il arrive souvent que le résultat d'une suite de commandes soit committé atomiquement. On n'implémente pas cette fonctionnalité ici, mais elle correspondrait au scope conversation de Seam/CDI ou à un flow Spring Web Flow. Ici on se contente d'instancier une conversation au début de chaque test. La conversation est identifiée à l'Invocator (cf 0/), qui a le double rôle de stocker et de déclencher les commandes. Ici, c'est le Client qui demande à l'Invocator ce déclenchement 
+
+
 -------Variation: Compensation Undo-------
+Une action compensatoire d'une action A consiste à effectuer l'action inverse -A. Par exemple, l'action compensatoire d'un débit erronné de x EUR est un crédit de x EUR. 
+Dans le pattern Command, ceci se traduit par une commande Undoable: 
+
+
+
+-------Variation: Replay Undo-------
+
+-------Variation: Snapshot Undo-------
+
+--------------2/c Critères de choix d'une variation
+
+-------Variation: Compensation Undo-------
+-Cas idéal: 
+-La commande doit être undoable. Certaines actions sont undoables, mais les undoer dans le cas le plus général est très difficile. Ex: CRUD, update, lien avec le fait d'éviter le verbe update
+-Quand tous les changements de l'état applicatif sont stockés comme une séquence d'événements (Event Sourcing), doit-on utiliser les actions compensatoires? Pas forcément, tant que l'événement qu'on veut annuler n'est pas définitif (il fait partie d'une conversation pas encore commitée).
+
 
 
 -------Variation: Replay Undo-------

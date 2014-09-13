@@ -8,15 +8,16 @@ public class Stack<T> {
 
 	//Delegate to avoid exposing too many Deque methods
 	private final Deque<T> stack = new LinkedList<>();
-	public void push(T cmd) {
-		stack.addLast(cmd);
-	}
-
+	
 	/**
 	 * @return null if stack is empty
 	 */
 	public T pop() {
-		return stack.pollLast();
+		return stack.pollLast(); //Not using pop since it throws NoSuchElementException if the deque is empty
+	}
+	
+	public void push(T cmd) {
+		stack.addLast(cmd);
 	}
 
 	public void clear() {
