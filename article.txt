@@ -1,9 +1,5 @@
 !!!!!!!!!!!!!!!!
-1/Dans notre exemple, l'undo a une profondeur illimitée.
--->attention au OOME!
-a implementer ou au moins a signaler
-
-2/expliquer pqoi exec-->redo.clear
+2/expliquer pqoi exec-->redo.clear (par ex ds la 1ere variation)
 !!!!!!!!!!!!!!!!
 
 
@@ -531,7 +527,8 @@ public class CommandUndoTest_Replay_Typing_Test extends CommandUndoTest_Typing<C
 
 
 -------Variation: Memento Undo-------
-On peut aussi implémenter l'undo en capturant l'état du système après exécution de chaque commande, et restaurer l'état lors d'un undo. Ceci évoque un autre pattern du GOF, le Memento:
+On peut aussi implémenter l'undo en capturant l'état du système après exécution de chaque commande, et restaurer l'état lors d'un undo. 
+Ceci évoque un autre pattern du GOF, le Memento: 
 ***schema UML 6: memento***
 
 Le memento doit être capable de restaurer un état capturé antérieurement, d'où l'exigence d'immutabilité:
@@ -597,20 +594,36 @@ class BeforeAfter {
 	}
 }
 ++++++++++++++
+Dans cette variation, la commande est donc l'originator du pattern Memento, et la conversation est le caretaker (indirectement, via ses stacks):
+***schema UML 7: memento undo***
 
 --------------2/c Critères de choix d'une variation
 
 -------Variation: Compensation Undo-------
--Cas idéal: 
--La commande doit être undoable. Certaines actions sont undoables, mais les undoer dans le cas le plus général est très difficile. Ex: CRUD, update, lien avec le fait d'éviter le verbe update
--Quand tous les changements de l'état applicatif sont stockés comme une séquence d'événements (Event Sourcing), doit-on utiliser les actions compensatoires? Pas forcément, tant que l'événement qu'on veut annuler n'est pas définitif (il fait partie d'une conversation pas encore commitée).
-
-
-
--------Variation: Replay Undo-------
+-La Compensation est la plus naturelle (symétrie entre la commande et son inverse) et le choix par défaut. Une stack de commandes est souvent plus lightweight que des snapshots de l'état complet (VS Memento), et évite de rejouer une séquence de commandes (VS Replay).
+-Cette variation est idéale quand il existe une commande inverse naturelle dont le nom est évident: 
+	-Le contraire d'une création est une suppression, et vice-versa  
+	-Le contraire d'un débit est un crédit, et vice-versa 
+-Ceci fonctionne bien quand la sémantique de la commande est très précise et a peu de degrés de libertés
+-Par contre un "update"	est difficile à compenser dans le cas général: il faut mémoriser tous les champs mis à jour, et encore plus difficile compenser les modifications de relations entre entités
+-La méthode Domain Driven Design préconise de toute façon d'éviter l'update générique (POST), et de modéliser les changements d'état par des transitions déclenchées par des événements (PUT /event {eventData}). Les transitions ont une sémantique plus précise et sont plus facile à compenser.
+-Les commandes non-compensables ne peuvent utiliser cette variation. Par exemple l'écriture dans un log ne peut être compensée.
+-Quand tous les changements de l'état applicatif sont stockés comme une séquence d'événements (Event Sourcing), doit-on forcément utiliser les actions compensatoires? Pas forcément, tant que l'événement qu'on veut annuler n'est pas définitif (tant qu'il fait partie d'une conversation pas encore commitée).
 
 -------Variation: Memento Undo-------
+-A privilégier quand on a un moyen simple ou naturel de réaliser des captures de l'état
+-Ou quand la compensation n'est pas possible
+-La réalisation de captures de l'état après chaque commande ne doit pas être rédhibitoire du point de vue des performances (latence, utilisation mémoire)
 
+-------Variation: Replay Undo-------
+-En dernier recours on peut implémenter l'undo avec la variation replay
+-En effet il est plus probable dans le cas général de trouver une commande qui resette l'état à 0, que de pouvoir réaliser une capture de tout l'état après une séquence arbitraire de commandes, et repositionner le système dans cet état arbitrairement complexe
+-La latence induite par le rejeu de la séquence de commande ne doit pas être rédhibitoire du point de vue des performances (latence)
+
+
+
+
+--------------3/ Application à des commandes de persistance
 ++++++++++++++
 public class CustomerCommands {
 
@@ -633,3 +646,9 @@ public class CustomerCommands {
 
 }
 ++++++++++++++
+
+
+
+--------------4/ Autres considérations
+Dans notre exemple, les stacks d'undo ont une profondeur illimitée. Ceci peut provoquer une OOME, et de toute façon l'utilisateur ne se rappelle plus des opérations trop anciennes.
+Le principe GRASP (attribution de responsabilités) "expert en information" nous suggère de placer cette limitation dans le type qui a la connaissance de la profondeur actuelle de la stack, donc Stack.
