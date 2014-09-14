@@ -1,9 +1,10 @@
 package cla.command.undo.memento;
 
 
-//@Immutable
+/**
+ * Implementations must be immutable (the memento must capture a snapshot)
+ */
+@FunctionalInterface
 public interface Memento {
-	
 	void restore();
-	
 }
