@@ -1,0 +1,614 @@
+La dernière fois je vous avez parlé de [quelques patterns d'implémentation avec les enums java|http://blog.zenika.com/index.php?post/2014/06/11/Quelques-patterns-d-implementation-avec-les-enums-java||quelques patterns d'implémentation avec les enums java] et en particulier de l'application des enums au Domain Driven Design grâce à l'inversion de dépendance. Continuons notre révision des bases avec le pattern Command. 
+
+!!!Généralités
+Selon le GOF, l'intention du pattern Command, est d'"encapsuler une requête comme un objet, autorisant ainsi le paramétrage des clients par différentes requêtes, file d'attente et récapitulatifs de requêtes, et de plus permettant la révision des opérations". Le GOF fait ici allusion à deux utilisations des commandes: découpler la création d'une reqête de son exécution, et implémenter l'undo. Ce dernier point est le sujet principal de ce post.
+
+La structure est la suivante:
+***schema UML 1***
+Lors de l'instanciation d'une ConcreteCommand par le Client, celle-ci capture l'état permettant de d'invoquer une action paramétrée. Lorsque l'Invocator déclenche une Command, la ConcreteCommand invoque le Receptor en passant l'état stocké en paramètre. Ce pattern permet de découpler l'instanciation d'un traitement de son exécution. On introduit souvent ce degré d'abstraction lorsque les lieux d'instanciation et d'exécution d'un traitement sont éloignés, dans l'espace ou dans le temps. 
+
+!!!Le pattern Command pour résoudre le problème de l'éloignement spatial ou temporel
+L'éloignement en question est celui entre le point (spatial ou temporel) de création de la commande, qui est le seul à connaître les données nécessaires à l'exécution d'un traitement, et le point d'exécution de la commande, qui est le seul à connaître le contexte/scope/ressources techniques nécessaires à son exécution.
+
+!!Cas spatial: commande remote
+Dans le cas spatial, la commande est typiquement créée dans un client et exécutée dans un serveur:
+***schema UML 2***
+-Le constructeur de la commande concrète capture les données propres à une transaction client. 
+-La méthode execute de la commande concrète invoque un ou plusieurs récepteurs abstraits (ex: Repository). 
+-Pour ce faire, elle récupère les récepteurs abstraits dans l'environment d'exécution abstrait (ex: ExecutionEnvironment.getRepository
+-Les récepteurs concrets (ex: DAO implements Repository) et l'environnement d'exécution concret sont implémentés côté serveur
+-Côté serveur, la commande est reçue par le RemoteInvocator
+-Le RemoteInvocator instancie un ConcreteExecutionEnvironment, en passant à son constructeur les ressources techniques nécessaires (EntityManager, ...). Le RemoteInvocator peut par exemple être un EJB @Remote.
+-Le ConcreteExecutionEnvironment construit et agrège les récepteurs concrets (DAO, ...) en utilisant les ressources fournies par le RemoteInvocator (EntityManager, ...)
+-Le RemoteInvocator invoque la méthode execute de la commande en passant le ConcreteExecutionEnvironment
+
+!!Cas temporel: l'undo
+Dans le cas temporel, le problème est différent: la commande peut être exécutée tout de suite, mais elle doit pouvoir être annulée ou rejouée à un instant ultérieur et indéfini. Comme le dit le GOF, "un objet Commande peut avoir une durée de vie indépendante de la requête originelle". Il est donc nécessaire qu'un contexte maintienne une référence vers la commande exécutée. Dans la suite on nomme ce contexte __Conversation__. La conversation mémorise les commandes exécutées et déclenche l'undo/redo.
+Ce type de commande est typiquement exécuté dans le même environnement que celui où la commande a été instanciée, et la méthode execute n'a donc pas besoin d'un paramétre ExecutionEnvironnement (les ressources nécessaires à l'exécution peuvent être passées dès l'instanciation).
+***schema UML 3***
+
+!!Cas spacial et temporel-------
+Il est évidemment possible de cumuler les deux difficultés, auquel cas le serveur devra à la fois fournir un ExecutionEnvironment, et maintenir des références vers les commandes déjà exécutées (un EJB Stateful permet par exemple de remplir ces deux fonctionnalités). Puisque ce post concerne l'undo, on simplifiera cependant en supposant que les commandes sont locales (intra-JVM, sans remoting)
+
+!!!L'Undo-------
+La fonctionnalité d'undo/redo est fréquemment demandée pour une IHM car l'être humain se trompe. Elle est souvent lié à une action utilisateur Ctrl+Z/Ctrl+Y. Elle n'est cependant pas triviale à implémenter, car les implémentations possibles dépendent du type de commande (on donne des exemples plus loin). On propose ici trois variations du pattern, plus ou moins adaptées selon le type de commande. 
+
+Le code est disponible sur Github: __https://github.com/vandekeiser/cmd-pattern__
+Il nécessite java 8 (on utilise des lambdas).
+Le projet contient le framework d'undo par commandes. Les tests junit implémentent 1 type de commande, __Typing__, qui représente la saisie d'un string sur un affichage (Display). Il comprend une même suite de tests appliquée aux 3 variations.
+
+Venons-en au coeur du sujet: quelles sont les implémentation possibles? Comment les implémenter? Comment les choisir pour un type de commande particulier?
+
+!!Les interfaces principales: Command et Conversation
+Puisqu'on se place dans le cas simple sans ExecutionEnvironment, l'interface Command est la suivante:
+///[java]
+@FunctionalInterface
+public interface Command {
+	void execute();
+}
+///
+L'annotation @FunctionalInterface n'est pas obligatoire, mais elle a les avantages suivants:
+-Demande au compilateur de vérifier que notre interface est une Single Abstract Method Interface, qui peut être implémentée par un lambda
+-Documente ce fait aux utilisateurs de l'interface, et signale l'engagement de l'auteur du framework à maintenir cette caractéristique dans les version futures
+
+Introduisons la conversation, qui est le scope dans lequel on execute, annule, et rejoue des commandes:
+///[java]
+public interface Conversation<C extends Command> {
+	void exec(C cmd);
+	void undo();
+	void redo();
+}
+///
+Le nom conversation souligne le fait qu'il arrive souvent que le résultat d'une suite de commandes soit committé atomiquement. On n'implémente pas cette fonctionnalité ici, mais elle correspondrait au scope conversation de Seam/CDI ou à un flow Spring Web Flow. Ici on se contente d'instancier une conversation au début de chaque test. 
+La conversation est identifiée à l'Invocator (cf 0/), qui a le double rôle de mémoriser et de déclencher les commandes. Ici, c'est le même Client créateur de commandes concrètes qui demande à l'Invocator ce déclenchement. Le __type parameter__ C varie selon qu'on utilise une des trois variations.
+
+!!Les tests exécutés pour toutes les variations
+Pour s'assurer que les 3 variations sont fonctionnellement équivalentes, on écrit les tests dans une classe abstraite CommandUndoTest_Typing. 
+Les tests utilisent une commande TypeString qui représente la saisie d'un String dans un Display.
+
+CommandUndoTest_Typing commence par les cas triviaux et va jusqu'à une conversation complexe:
+///[java]
+       /**
+	 * Basic undo
+	 * a    --> "a" 
+	 * undo --> ""
+	 */
+	@Test public void basicUndo() {
+		Conversation<C> commands = newConversation();
+		
+		commands.exec(typeString("a"));
+		assertEquals("a", display.displayed());
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+	}
+	
+	/**
+	 * Undo is noop when there were no execs
+	 * undo --> ""
+	 */
+	@Test public void basicNoopUndo() {
+		Conversation<C> commands = newConversation();
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+	}
+	
+	/**
+	 * Undo is noop when there were no execs, even when undo is called several times 
+	 * undo --> ""
+	 * undo --> ""
+	 */
+	@Test public void basicNoopUndoTwice() {
+		Conversation<C> commands = newConversation();
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+	}
+	
+	/**
+	 * Undo is noop when there is nothing more to undo
+	 * a    --> "a" 
+	 * undo --> ""
+	 * undo --> ""
+	 */
+	@Test public void noopUndo() {
+		Conversation<C> commands = newConversation();
+		
+		commands.exec(typeString("a"));
+		assertEquals("a", display.displayed());
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+	}
+	
+	/**
+	 * Basic redo
+	 * a    --> "a" 
+	 * undo --> ""
+	 * redo --> "a"
+	 */
+	@Test public void basicRedo() {
+		Conversation<C> commands = newConversation();
+		
+		commands.exec(typeString("a"));
+		assertEquals("a", display.displayed());
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+		
+		commands.redo();
+		assertEquals("a", display.displayed());
+	}
+	
+	/**
+	 * Redo is noop when there were no undos
+	 * redo --> ""
+	 */
+	@Test public void basicNoopRedo() {
+		Conversation<C> commands = newConversation();
+		
+		commands.redo();
+		assertEquals("", display.displayed());
+	}
+	
+	/**
+	 * Redo is noop when there were no undos, even when redo is called several times 
+	 * redo --> ""
+	 * redo --> ""
+	 */
+	@Test public void basicNoopRedoTwice() {
+		Conversation<C> commands = newConversation();
+		
+		commands.redo();
+		assertEquals("", display.displayed());
+		
+		commands.redo();
+		assertEquals("", display.displayed());
+	}
+	
+	/**
+	 * Slightly more complex interaction between undo and redo
+	 * a    --> "a" 
+	 * undo --> ""
+	 * redo --> "a"
+	 * undo --> ""
+	 */
+	@Test public void exec_undo_redo_undo() {
+		Conversation<C> commands = newConversation();
+		
+		commands.exec(typeString("a"));
+		assertEquals("a", display.displayed());
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+		
+		commands.redo();
+		assertEquals("a", display.displayed());
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+	}
+	
+	/**
+	 * a    --> "a"
+	 * b    --> "ab" 
+	 * undo --> "a"
+	 * undo --> ""
+	 */
+	@Test public void typeA_typeB_undo_undo() {
+		Conversation<C> commands = newConversation();
+		
+		commands.exec(typeString("a"));
+		assertEquals("a", display.displayed());
+		
+		commands.exec(typeString("b"));
+		assertEquals("ab", display.displayed());
+		
+		commands.undo();
+		assertEquals("a", display.displayed());
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+	}
+	
+	/**
+	 * a    --> "a"
+	 * b    --> "ab" 
+	 * undo --> "a"
+	 * redo --> "ab"
+	 */
+	@Test public void exec_exec_undo_redo() {
+		Conversation<C> commands = newConversation();
+		
+		commands.exec(typeString("a"));
+		assertEquals("a", display.displayed());
+		
+		commands.exec(typeString("b"));
+		assertEquals("ab", display.displayed());
+		
+		commands.undo();
+		assertEquals("a", display.displayed());
+		
+		commands.redo();
+		assertEquals("ab", display.displayed());
+	}
+	
+	/**
+	 * a    --> "a"
+	 * b    --> "ab" 
+	 * undo --> "a"
+	 * undo --> ""
+	 * redo --> "a"
+	 * redo --> "ab"
+	 */
+	@Test public void exec_exec_undo_undo_redo_redo() {
+		Conversation<C> commands = newConversation();
+		
+		commands.exec(typeString("a"));
+		assertEquals("a", display.displayed());
+		
+		commands.exec(typeString("b"));
+		assertEquals("ab", display.displayed());
+		
+		commands.undo();
+		assertEquals("a", display.displayed());
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+		
+		commands.redo();
+		assertEquals("a", display.displayed());
+		
+		commands.redo();
+		assertEquals("ab", display.displayed());
+	}
+	
+	@Test public void complexConversation() {
+		Conversation<C> commands = newConversation();
+		
+		commands.exec(typeString("a"));
+		assertEquals("a", display.displayed());
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+		
+		commands.exec(typeString("b"));
+		assertEquals("b", display.displayed());
+		
+		commands.exec(typeString("c"));
+		assertEquals("bc", display.displayed());
+		
+		commands.exec(typeString("d"));
+		assertEquals("bcd", display.displayed());
+		
+		commands.undo();
+		assertEquals("bc", display.displayed());
+		
+		commands.redo();
+		assertEquals("bcd", display.displayed());
+		
+		commands.undo();
+		assertEquals("bc", display.displayed());
+		
+		commands.undo();
+		assertEquals("b", display.displayed());
+		
+		commands.exec(typeString("e"));
+		assertEquals("be", display.displayed());
+		
+		commands.exec(typeString("f"));
+		assertEquals("bef", display.displayed());
+		
+		commands.undo();
+		assertEquals("be", display.displayed());
+		
+		commands.undo();
+		assertEquals("b", display.displayed());
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+		
+		commands.redo();
+		assertEquals("b", display.displayed());
+		
+		commands.redo();
+		assertEquals("be", display.displayed());
+		
+		commands.redo();
+		assertEquals("bef", display.displayed());
+		
+		commands.redo();
+		assertEquals("bef", display.displayed());
+		
+		commands.undo();
+		assertEquals("be", display.displayed());
+		
+		commands.undo();
+		assertEquals("b", display.displayed());
+		
+		commands.undo();
+		assertEquals("", display.displayed());
+	}
+///
+
+Les classes concrètes spécifiques aux 3 variations ne font qu'instancier un type différent de Conversation (à un détail technique propre aux génériques java près):
+///[java]
+public class CommandUndoTest_Compensation_Typing_Test extends CommandUndoTest_Typing<CompensableCommand> {
+	@Override protected Conversation<CompensableCommand> newConversation() {
+		return new CompensationConversation();
+	}
+
+	@Override protected CompensableCommand typeString(String stringToType) {
+		return new TypeString(display, stringToType);
+	}
+}
+
+public class CommandUndoTest_Replay_Typing_Test extends CommandUndoTest_Typing<Command> {
+	@Override protected Conversation<Command> newConversation() {
+		return new ReplayConversation(()->{
+			display.reset();
+		});
+	}
+
+	@Override protected Command typeString(String stringToType) {
+		return new TypeString(display, stringToType);
+	}
+}
+
+public class CommandUndoTest_Memento_Typing_Test extends CommandUndoTest_Typing<MementoableCommand> {
+	@Override protected Conversation<MementoableCommand> newConversation() {
+		return new MementoConversation();
+	}
+
+	@Override protected MementoableCommand typeString(String stringToType) {
+		return new TypeString(display, stringToType);
+	}
+}
+///
+
+!!Coeur de l'implémentation
+
+Le coeur de l'implémentation est l'utilisation de 2 stacks (FIFO), une pour l'undo et une pour le redo: intuitivement, on sent bien que:
+-chaque exécution de commande rajoute un undo potentiel
+-chaque undo rajoute un redo potentiel
+
+///[java]
+/**
+ * @param <C> Command type
+ * @param <S> Stack type
+ */
+public abstract class AbstractConversation<C extends Command, S> implements Conversation<C> {
+	protected final Stack<S> undoStack, redoStack;
+	
+	public AbstractConversation() {
+		this.undoStack = new Stack<S>();
+		this.redoStack = new Stack<S>();
+	}
+}
+///
+On utilise un __type parameter__ S en plus du type de commande C, car dans certaines variantes, on ne mémorise pas les commandes mais plutôt leurs effets.
+
+La classe Stack est une classe interne au framework utilisée par les 3 variations:
+///[java]
+public class Stack<T> {
+
+	//Delegate to avoid exposing too many Deque methods
+	private final Deque<T> stack = new LinkedList<>();
+	
+	/**
+	 * @return null if stack is empty
+	 */
+	public T pop() {
+		return stack.pollLast(); //Not using pop since it throws NoSuchElementException if the deque is empty
+	}
+	
+	public void push(T cmd) {
+		stack.addLast(cmd);
+	}
+
+	public void clear() {
+		stack.clear();
+	}
+	
+	public void forEachFifo(Consumer<? super T> action) {
+		stack.stream().forEachOrdered(action);
+	}
+}
+///
+
+!!Variation: Undo par Compensation
+Une action compensatoire d'une action A consiste à effectuer l'action inverse -A. Par exemple, l'action compensatoire d'un débit erronné de x EUR est un crédit de x EUR. 
+
+Dans le pattern Command, ceci se traduit par une commande compensable: 
+///[java]
+public interface CompensableCommand extends Command {
+	void compensate();
+}
+///
+
+L'__invocator__ (cf. 0/) CompensationConversation est spécialisé pour ce type de commande:
+///[java]
+public class CompensationConversation extends AbstractConversation<CompensableCommand, CompensableCommand> {
+
+	@Override public void exec(CompensableCommand todo) {
+		todo.execute();
+		undoStack.push(todo);
+		redoStack.clear();
+	}
+
+	@Override public void undo() {
+		CompensableCommand latestCmd = undoStack.pop();
+		if(latestCmd==null) return; 
+		latestCmd.compensate();
+		redoStack.push(latestCmd);
+	}
+
+	@Override public void redo() {
+		CompensableCommand latestCmd = redoStack.pop();
+		if(latestCmd==null) return; 
+		latestCmd.execute();
+		undoStack.push(latestCmd);
+	}
+}
+///
+Dans son cas, les deux __type parameters__ sont identique (S=C=CompensableCommand dans AbstractConversation<C,S>), puisque l'état mémorisé est constitué de commandes. En effet, la compensation utilise les commandes déjà exécutées pour les compenser (undo) ou les rejouer (redo). 
+
+A la fin d'exec(), on vide la stack de redo: les commandes undoées qui précèdent l'exécution d'une commande sont complètement effacées de la mémoire. La raison de ce choix est de se conformer aux conventions de toutes les IHM offrant un undo/redo (principe de moindre surprise).  
+
+!!Variation: Undo par Replay
+Il est parfois difficile de trouver une action compensatrice. Dans ce cas si on a invoqué N commandes, une  implémenter alternative de l'undo est de réinitialiser l'état, puis de rejouer les N-1 premières commandes. Le redo consiste alors simplement à rejouer la Nième commande.
+
+L'__invocator__ (cf. 0/) ReplayConversation n'a pas besoin d'un type de commande particulier de commande contrairement au cas de la compensation (S=C=Command dans AbstractConversation<C,S>). Par contre elle a besoin d'une instance de commande capable de resetter l'état:
+///[java]
+public class ReplayConversation extends AbstractConversation<Command, Command> {
+	private final Command reset;
+	
+	public ReplayConversation(Command reset) {
+		this.reset = reset;
+	}
+
+	@Override public void exec(Command todo) {
+		todo.execute();
+		undoStack.push(todo);
+		redoStack.clear();
+	}
+
+	@Override public void undo() {
+		Command latestCmd = undoStack.pop() ;
+		if(latestCmd==null) return;
+        redoStack.push(latestCmd);
+        reset.execute();
+        undoStack.forEachFifo(cmd->cmd.execute());
+	}
+
+	@Override public void redo() {
+		Command latestCmd = redoStack.pop() ;
+		if(latestCmd==null) return;
+		latestCmd.execute();
+        undoStack.push( latestCmd ) ; 
+	}
+}
+///
+Le reset de l'état utilise une commande spécifique au type d'état modifié par les commandes. Dans le cas de la commande Typing (saisie) qui modifie un Display (affichage), on peut simplement effacer complètement l'affichage:
+///[java]
+public class CommandUndoTest_Replay_Typing_Test extends CommandUndoTest_Typing<Command> {
+	@Override protected Conversation<Command> newConversation() {
+		return new ReplayConversation(()->{
+			display.clear();
+		});
+	}
+}
+///
+
+
+!!Variation: Undo par Memento 
+On peut aussi implémenter l'undo en capturant l'état du système après exécution de chaque commande, et restaurer l'état lors d'un undo. 
+Ceci évoque un autre pattern du GOF, le Memento: 
+***schema UML 4: memento***
+L'Originator crée un Memento à partir d'un snapshot de son état. Le CareTaker est chargé de connaître le Memento pour pouvoir demander ultérieurement la restauration de l'état capturé.
+
+Le memento doit être capable de restaurer un état capturé antérieurement, d'où l'exigence d'immutabilité:
+///[java]
+/**
+ * Implementations must be immutable (the memento must capture a snapshot)
+ */
+@FunctionalInterface
+public interface Memento {
+	void restore();
+}
+///
+
+Chaque type de commande peut modifier un type d'état différent, pour lequel la façon de capturer un Memento sera différente. Le plus simple est donc de spécialiser Command en MementoableCommand, pour que les implémentations de MementoableCommand réalisent à la fois la modification et la capture de cet état:
+///[java]
+public interface MementoableCommand extends Command {
+	Memento takeSnapshot();	
+}
+///
+
+Dans son cas, les deux __type parameters__ ne sont pas identiques (C=MementoableCommand, S=BeforeAfter dans AbstractConversation<C,S>), puisque l'état mémorisé est constitué de captures successives de l'état. Petite subtilité: pour implémenter le redo, on a besoin de capturer aussi l'état après exécution de la commande:
+///[java]
+public class MementoConversation extends AbstractConversation<MementoableCommand, BeforeAfter> {
+
+	@Override public void exec(MementoableCommand todo) {
+		Memento before = todo.takeSnapshot();
+		todo.execute();
+		Memento after = todo.takeSnapshot();
+		
+		undoStack.push(new BeforeAfter(before, after));
+		redoStack.clear();
+	}
+
+	@Override public void undo() {
+		BeforeAfter latestMemento = undoStack.pop();
+		if(latestMemento==null) return;
+		Memento latestBefore = latestMemento.before;
+		latestBefore.restore();
+		redoStack.push(latestMemento);
+	}
+
+	@Override public void redo() {
+		BeforeAfter latestMemento = redoStack.pop();
+		if(latestMemento==null) return; 
+		Memento latestAfter = latestMemento.after;
+		latestAfter.restore();
+		undoStack.push(latestMemento);
+	}
+}
+
+//@Immutable
+class BeforeAfter {
+
+	final Memento before, after;
+	
+	/**
+	 * @param before must be immutable
+	 * @param after  must be immutable
+	 */
+	public BeforeAfter(Memento before, Memento after) {
+		this.before = before;
+		this.after = after;
+	}
+}
+///
+Dans cette variation, la commande est donc l'originator du pattern Memento, et la conversation est le caretaker (indirectement, via ses stacks):
+***schema UML 5: memento undo***
+
+!!!Critères de choix d'une variation
+
+!!Compensation Undo
+-La Compensation est la plus naturelle (symétrie entre la commande et son inverse) et le choix par défaut. Une stack de commandes est souvent plus lightweight que des snapshots de l'état complet (VS Memento), et évite de rejouer une séquence de commandes (VS Replay).
+-Cette variation est idéale quand il existe une commande inverse naturelle dont le nom est évident: 
+	-Le contraire d'une création est une suppression, et vice-versa  
+	-Le contraire d'un débit est un crédit, et vice-versa 
+-Ceci fonctionne bien quand la sémantique de la commande est très précise et a peu de degrés de libertés
+-Par contre un "update"	est difficile à compenser dans le cas général: il faut mémoriser tous les champs mis à jour, et encore plus difficile compenser les modifications de relations entre entités
+-La méthode Domain Driven Design préconise de toute façon d'éviter l'update générique (POST), et de modéliser les changements d'état par des transitions déclenchées par des événements (PUT /event {eventData}). Les transitions ont une sémantique plus précise et sont plus facile à compenser.
+-Les commandes non-compensables ne peuvent utiliser cette variation. Par exemple l'écriture dans un log ne peut être compensée.
+-Quand tous les changements de l'état applicatif sont stockés comme une séquence d'événements (Event Sourcing), doit-on forcément utiliser les actions compensatoires? Pas forcément, tant que l'événement qu'on veut annuler n'est pas définitif (tant qu'il fait partie d'une conversation pas encore commitée).
+
+!!Variation: Memento Undo-------
+-A privilégier quand on a un moyen simple ou naturel de réaliser des captures de l'état
+-Ou quand la compensation n'est pas possible
+-La réalisation de captures de l'état après chaque commande ne doit pas être rédhibitoire du point de vue des performances (latence, utilisation mémoire)
+
+!!Variation: Replay Undo
+-En dernier recours on peut implémenter l'undo avec la variation replay
+-En effet il est plus probable dans le cas général de trouver une commande qui resette l'état à 0, que de pouvoir réaliser une capture de tout l'état après une séquence arbitraire de commandes, et repositionner le système dans cet état arbitrairement complexe
+-La latence induite par le rejeu de la séquence de commande ne doit pas être rédhibitoire du point de vue des performances (latence)
+
+
+!!!Autres considérations
+!!Profondeur de l'undo-redo
+Dans notre exemple, les stacks d'undo/redo ont une profondeur illimitée. Ceci peut provoquer une OOME, et de toute façon l'utilisateur ne se rappelle plus des opérations trop anciennes.
+Le principe GRASP (attribution de responsabilités) "expert en information" nous suggère de placer cette limitation dans le type qui a la connaissance de la profondeur actuelle de la stack, donc Stack.
+
+!!Commandes et macros
+A partir du pattern Command il est très simple de définir des macros: il suffit d'utiliser en plus le pattern Composite:
+***schema UML 6***
