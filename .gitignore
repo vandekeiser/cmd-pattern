@@ -1,24 +1,4 @@
+/target
 .classpath
 .project
-code/command/.settings/*
-bin/*
-*.7z
-*/.idea/*
-code/command/target/**
-*.iml
-.metadata/*
-
-workspace/*
-
-Source Phile*
-pf-cda*
-
-#glob doesn't work??
-**/.settings/**
-**/.settings/**
-**/target/**
-**/.settings
-
-code/customer-app/customer-app/.settings/*
-code/customer-app/customer-app/target/*
-articles/*
+.settings/*
