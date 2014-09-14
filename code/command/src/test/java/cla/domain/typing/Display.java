@@ -38,7 +38,7 @@ public class Display {
 		displayElements.addAll(newState);
 	}
 
-	public void reset() {
+	public void clear() {
 		displayElements.clear();
 	}
 

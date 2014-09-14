@@ -29,7 +29,7 @@ public class ReplayConversation extends AbstractConversation<Command, Command> {
 		Command latestCmd = redoStack.pop() ;
 		if(latestCmd==null) return;
 		latestCmd.execute();
-        undoStack.push( latestCmd ) ; 
+        undoStack.push(latestCmd); 
 	}
 	
 }

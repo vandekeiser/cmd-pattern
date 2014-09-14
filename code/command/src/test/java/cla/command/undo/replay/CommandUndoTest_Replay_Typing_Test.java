@@ -9,7 +9,7 @@ public class CommandUndoTest_Replay_Typing_Test extends CommandUndoTest_Typing<C
 
 	@Override protected Conversation<Command> newConversation() {
 		return new ReplayConversation(()->{
-			display.reset();
+			display.clear();
 		});
 	}
 
