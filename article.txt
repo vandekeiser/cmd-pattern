@@ -1,8 +1,3 @@
-!!!!!!!!!!!!!!!!
-2/expliquer pqoi exec-->redo.clear (par ex ds la 1ere variation)
-!!!!!!!!!!!!!!!!
-
-
 Pattern Command: Undo, variations Compensation/Replay/Memento
 
 -------INTRO-------
@@ -31,7 +26,8 @@ Dans le cas spatial, la commande est typiquement créée dans un client et exéc
 -Le RemoteInvocator invoque la méthode execute de la commande en passant le ConcreteExecutionEnvironment
 
 ----Cas temporel: l'undo-------
-Dans le cas temporel, le problème est différent: la commande peut être exécutée tout de suite, mais elle doit pouvoir être annulée ou rejouée à un instant ultérieur et indéfini. Comme le dit le GOF, "un objet Commande peut avoir une durée de vie indépendante de la requête originelle" Il est donc nécessaire qu'un __contexte__ maintienne une référence vers la commande exécutée. Ce type de commande est typiquement exécuté dans le même environnement que celui où la commande a été instanciée, et la méthode execute n'a donc pas besoin d'un paramétre ExecutionEnvironnement (les ressources nécessaires à l'exécution peuvent être passées dès l'instanciation): 
+Dans le cas temporel, le problème est différent: la commande peut être exécutée tout de suite, mais elle doit pouvoir être annulée ou rejouée à un instant ultérieur et indéfini. Comme le dit le GOF, "un objet Commande peut avoir une durée de vie indépendante de la requête originelle". Il est donc nécessaire qu'un contexte maintienne une référence vers la commande exécutée. Dans la suite on nomme ce contexte __Conversation__. La conversation mémorise les commandes exécutées et déclenche l'undo/redo.
+Ce type de commande est typiquement exécuté dans le même environnement que celui où la commande a été instanciée, et la méthode execute n'a donc pas besoin d'un paramétre ExecutionEnvironnement (les ressources nécessaires à l'exécution peuvent être passées dès l'instanciation).
 ***schema UML 3***
 
 ----Cas spacial et temporel-------
@@ -48,7 +44,7 @@ Le répertoire code est organisé en 2 projets maven:
 	-__command__ contient le framework d'undo par commandes. Les tests junit implémentent 1 type de commande, __Typing__, qui représente la saisie d'un string sur un affichage (Display). 
 	Il comprend une même suite de tests appliquée aux 3 variations.
 
-	-__customer-app__ est une mini-application utilisatrice illustrant l'utilisation du framework. Il s'agit d'un CRUD JPA implémenté avec SpringBoot/JPA/H2. Il comprend quelques tests, ce qui serait insuffisant pour une vraie application.
+	-__customer-app__ est une mini-application utilisatrice d'illustration. Il s'agit de commandes CRUD implémentées avec SpringBoot/JPA/H2. Il comprend quelques tests, ce qui serait insuffisant pour une vraie application.
 
 
 --------------2/b Variations de L'Undo par Command--------------
@@ -441,7 +437,6 @@ public class Stack<T> {
 
 -------Variation: Compensation Undo-------
 Une action compensatoire d'une action A consiste à effectuer l'action inverse -A. Par exemple, l'action compensatoire d'un débit erronné de x EUR est un crédit de x EUR. 
-***schema UML 4: compensation***
 
 Dans le pattern Command, ceci se traduit par une commande compensable: 
 ++++++++++++++
@@ -477,10 +472,10 @@ public class CompensationConversation extends AbstractConversation<CompensableCo
 ++++++++++++++
 Dans son cas, les deux __type parameters__ sont identique (S=C=CompensableCommand dans AbstractConversation<C,S>), puisque l'état mémorisé est constitué de commandes. En effet, la compensation utilise les commandes déjà exécutées pour les compenser (undo) ou les rejouer (redo). 
 
+A la fin d'exec(), on vide la stack de redo: les commandes undoées qui précèdent l'exécution d'une commande sont complètement effacées de la mémoire. La raison de ce choix est de se conformer aux conventions de toutes les IHM offrant un undo/redo (principe de moindre surprise).  
 
 -------Variation: Replay Undo-------
-Il est parfois difficile de trouver une action compensatrice. Dans ce cas si on a invoqué N commandes, une  implémenter alternative de l'undo est de réinitialiser l'état, puis de rejouer les N-1 premières commandes. Le redo consiste alors simplement à rejouer la Nième commande:
-***schema UML 5: replay***
+Il est parfois difficile de trouver une action compensatrice. Dans ce cas si on a invoqué N commandes, une  implémenter alternative de l'undo est de réinitialiser l'état, puis de rejouer les N-1 premières commandes. Le redo consiste alors simplement à rejouer la Nième commande.
 
 L'__invocator__ (cf. 0/) ReplayConversation n'a pas besoin d'un type de commande particulier de commande contrairement au cas de la compensation (S=C=Command dans AbstractConversation<C,S>). Par contre elle a besoin d'une instance de commande capable de resetter l'état:
 ++++++++++++++
@@ -513,7 +508,6 @@ public class ReplayConversation extends AbstractConversation<Command, Command> {
 	}
 }
 ++++++++++++++
-
 Le reset de l'état utilise une commande spécifique au type d'état modifié par les commandes. Dans le cas de la commande Typing (saisie) qui modifie un Display (affichage), on peut simplement effacer complètement l'affichage:
 ++++++++++++++
 public class CommandUndoTest_Replay_Typing_Test extends CommandUndoTest_Typing<Command> {
@@ -529,7 +523,8 @@ public class CommandUndoTest_Replay_Typing_Test extends CommandUndoTest_Typing<C
 -------Variation: Memento Undo-------
 On peut aussi implémenter l'undo en capturant l'état du système après exécution de chaque commande, et restaurer l'état lors d'un undo. 
 Ceci évoque un autre pattern du GOF, le Memento: 
-***schema UML 6: memento***
+***schema UML 4: memento***
+L'Originator crée un Memento à partir d'un snapshot de son état. Le CareTaker est chargé de connaître le Memento pour pouvoir demander ultérieurement la restauration de l'état capturé.
 
 Le memento doit être capable de restaurer un état capturé antérieurement, d'où l'exigence d'immutabilité:
 ++++++++++++++
@@ -595,7 +590,7 @@ class BeforeAfter {
 }
 ++++++++++++++
 Dans cette variation, la commande est donc l'originator du pattern Memento, et la conversation est le caretaker (indirectement, via ses stacks):
-***schema UML 7: memento undo***
+***schema UML 5: memento undo***
 
 --------------2/c Critères de choix d'une variation
 
@@ -623,32 +618,19 @@ Dans cette variation, la commande est donc l'originator du pattern Memento, et l
 
 
 
---------------3/ Application à des commandes de persistance
-++++++++++++++
-public class CustomerCommands {
+--------------3/ Autres considérations
+3/a/ Application à des commandes de persistance
+Le projet customer-app illustre la difficulté d'implémenter un undo sur des opérations JPA:
+	-La compensation est simple pour persist et remove mais presque impossible pour une mise à jour dans le cas le plus général
+	-Le memento est aussi difficile dans le cas général, car dans la réalité capturer un snapshot comprenant toutes les entités est lent et fait exploser la mémoire.
+	-Pour le replay, la première idée est d'implémenter la commande reset par un rollback, mais dans ce cas la conversation ne produit pas dans une conversation. 
 
-	public static MementoableCommand createCustomer(String name, CustomerDao dao) {
-		return new MementoableCommand() {
-			@Override public void execute() {
-				dao.persist(new Customer(name));				
-			}
-			
-			@Override public Memento takeSnapshot() {
-				List<Customer> allCustomers = dao.findAll();
-				return () -> {
-					dao.deleteAll();
-					allCustomers.stream().forEach(p -> dao.merge(p));
-					//allCustomers.stream().forEach(p -> dao.persist(p));//KO: PersistentObjectException: detached entity passed to persist
-				};
-			}
-		};
-	}
+Je déconseille donc d'implémenter l'undo/redo ou niveau JPA: il vaut mieux que la conversation travaille sur des objets détachés, et que ce soit la sauvegarde de la conversation qui déclenche le merge des entités détachées. L'inconvénient est que lors de la conversation on ne pourra pas utiliser de requêtes puisqu'on est hors transaction. 
 
-}
-++++++++++++++
-
-
-
---------------4/ Autres considérations
-Dans notre exemple, les stacks d'undo ont une profondeur illimitée. Ceci peut provoquer une OOME, et de toute façon l'utilisateur ne se rappelle plus des opérations trop anciennes.
+3/b/ Profondeur de l'undo-redo
+Dans notre exemple, les stacks d'undo/redo ont une profondeur illimitée. Ceci peut provoquer une OOME, et de toute façon l'utilisateur ne se rappelle plus des opérations trop anciennes.
 Le principe GRASP (attribution de responsabilités) "expert en information" nous suggère de placer cette limitation dans le type qui a la connaissance de la profondeur actuelle de la stack, donc Stack.
+
+3/c/ Commandes et macros
+A partir du pattern Command il est très simple de définir des macros: il suffit d'utiliser en plus le pattern Composite:
+***schema UML 6***
