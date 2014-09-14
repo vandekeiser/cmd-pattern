@@ -39,13 +39,7 @@ La fonctionnalité d'undo/redo est fréquemment demandée pour une IHM car l'êt
 -------2/a/ The codez-------
 Le code est disponible sur Github: __https://github.com/vandekeiser/cmd-pattern__
 Il nécessite java 8 (on utilise des lambdas).
-
-Le répertoire code est organisé en 2 projets maven:
-	-__command__ contient le framework d'undo par commandes. Les tests junit implémentent 1 type de commande, __Typing__, qui représente la saisie d'un string sur un affichage (Display). 
-	Il comprend une même suite de tests appliquée aux 3 variations.
-
-	-__customer-app__ est une mini-application utilisatrice d'illustration. Il s'agit de commandes CRUD implémentées avec SpringBoot/JPA/H2. Il comprend quelques tests, ce qui serait insuffisant pour une vraie application.
-
+Le projet contient le framework d'undo par commandes. Les tests junit implémentent 1 type de commande, __Typing__, qui représente la saisie d'un string sur un affichage (Display). Il comprend une même suite de tests appliquée aux 3 variations.
 
 --------------2/b Variations de L'Undo par Command--------------
 Venons-en au coeur du sujet: quelles sont les implémentation possibles? Comment les implémenter? Comment les choisir pour un type de commande particulier?
@@ -619,18 +613,10 @@ Dans cette variation, la commande est donc l'originator du pattern Memento, et l
 
 
 --------------3/ Autres considérations
-3/a/ Application à des commandes de persistance
-Le projet customer-app illustre la difficulté d'implémenter un undo sur des opérations JPA:
-	-La compensation est simple pour persist et remove mais presque impossible pour une mise à jour dans le cas le plus général
-	-Le memento est aussi difficile dans le cas général, car dans la réalité capturer un snapshot comprenant toutes les entités est lent et fait exploser la mémoire.
-	-Pour le replay, la première idée est d'implémenter la commande reset par un rollback, mais dans ce cas la conversation ne produit pas dans une conversation. 
-
-Je déconseille donc d'implémenter l'undo/redo ou niveau JPA: il vaut mieux que la conversation travaille sur des objets détachés, et que ce soit la sauvegarde de la conversation qui déclenche le merge des entités détachées. L'inconvénient est que lors de la conversation on ne pourra pas utiliser de requêtes puisqu'on est hors transaction. 
-
-3/b/ Profondeur de l'undo-redo
+3/a/ Profondeur de l'undo-redo
 Dans notre exemple, les stacks d'undo/redo ont une profondeur illimitée. Ceci peut provoquer une OOME, et de toute façon l'utilisateur ne se rappelle plus des opérations trop anciennes.
 Le principe GRASP (attribution de responsabilités) "expert en information" nous suggère de placer cette limitation dans le type qui a la connaissance de la profondeur actuelle de la stack, donc Stack.
 
-3/c/ Commandes et macros
+3/b/ Commandes et macros
 A partir du pattern Command il est très simple de définir des macros: il suffit d'utiliser en plus le pattern Composite:
 ***schema UML 6***
