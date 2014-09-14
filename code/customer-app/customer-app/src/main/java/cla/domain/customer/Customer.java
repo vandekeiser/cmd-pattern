@@ -13,11 +13,10 @@ public class Customer implements Serializable {
 	public Customer() {}
     public Customer(String name) { this.name = name; }
 
-	@Id
-    @GeneratedValue
+	@Id @GeneratedValue
     Long id;
 
-    @Column//(nullable = false)
+    @Column(nullable = false)
     String name;
 
 }

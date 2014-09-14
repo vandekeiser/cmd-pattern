@@ -1,11 +1,10 @@
-package cla;
+package cla.domain.customer;
 
 import java.util.List;
 
 import cla.command.undo.memento.Memento;
 import cla.command.undo.memento.MementoableCommand;
 import cla.dao.CustomerDao;
-import cla.domain.customer.Customer;
 
 public class CustomerCommands {
 
@@ -18,9 +17,14 @@ public class CustomerCommands {
 			@Override public Memento takeSnapshot() {
 				List<Customer> allCustomers = dao.findAll();
 				return () -> {
+					//To restore, 
+					
+					//1. Delete all
 					dao.deleteAll();
+					
+					//2. Recreate the snapshot list of customers
 					allCustomers.stream().forEach(p -> dao.merge(p));
-					//allCustomers.stream().forEach(p -> dao.persist(p));//KO: PersistentObjectException: detached entity passed to persist
+					//if persist instead of merge: "PersistentObjectException: detached entity passed to persist"
 				};
 			}
 		};

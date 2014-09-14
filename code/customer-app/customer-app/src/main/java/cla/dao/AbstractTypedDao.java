@@ -26,8 +26,7 @@ public abstract class AbstractTypedDao<T> extends Dao {
 	public List<T> findAll() {
 		Query findAll = em.createQuery("from " + type.getSimpleName());
 		List<?> all = findAll.getResultList();
-		@SuppressWarnings("unchecked") List<T> allUnsafeCast = (List<T>)all;
-		return Collections.checkedList(allUnsafeCast, type);
+		return safeCast(all);
 	}
 	
 	public void deleteAll() {

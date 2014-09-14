@@ -17,14 +17,12 @@ import cla.command.undo.memento.MementoConversation;
 import cla.command.undo.memento.MementoableCommand;
 import cla.dao.CustomerDao;
 import cla.domain.customer.Customer;
+import cla.domain.customer.CustomerCommands;
 
-//-FUCK JPA! essayer JDO2? 
-//-clone on persist/xxx?
-//-I always use a request scoped session and that makes the undo pretty easy: just throw an exception and the transaction gets rolled back immediately.
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=Application.class)
 @Transactional
-public class CustomerJpaCommandTest {
+public class CustomerMementoTest {
 
 	@Autowired CustomerDao dao;
 	MementoConversation conversation; 
@@ -39,7 +37,7 @@ public class CustomerJpaCommandTest {
 	
 	@Test public void exec_exec() {
 		String name = "Tartempion";
-		MementoableCommand createCustomer = createCustomer(name);//si on passe une instance de customer, on recree pas 2* la mm instance 
+		MementoableCommand createCustomer = createCustomer(name); 
 		
 		conversation.exec(createCustomer);
 		assertThat(dao.customersNamed(name)).hasSize(1);
