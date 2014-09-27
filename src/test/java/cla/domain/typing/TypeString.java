@@ -6,7 +6,6 @@ import cla.command.undo.compensation.CompensableCommand;
 import cla.command.undo.memento.Memento;
 import cla.command.undo.memento.MementoableCommand;
 
-//TODO add generic add/remove/upd?
 public class TypeString implements CompensableCommand, MementoableCommand {
 
 	private final Display display;

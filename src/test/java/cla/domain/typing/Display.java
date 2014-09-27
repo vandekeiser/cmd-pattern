@@ -1,8 +1,8 @@
 package cla.domain.typing;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Display {
 
@@ -17,16 +17,14 @@ public class Display {
 	}
 
 	public String displayed() {
-		StringBuilder sb = new StringBuilder();
-		for(String s : displayElements) sb.append(s);
-		return sb.toString();
+		return displayElements.stream().collect(Collectors.joining());
 	}
 
 	/**
 	 * @return A defensive copy of the current display state.
 	 */
 	public List<String> getState() {
-		return new ArrayList<String>(displayElements);
+		return new LinkedList<String>(displayElements);
 	}
 
 	/**
