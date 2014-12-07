@@ -13,23 +13,23 @@ public class ReplayConversation extends AbstractConversation<Command, Command> {
 
 	@Override public void exec(Command todo) {
 		todo.execute();
-		undoStack.push(todo);
-		redoStack.clear();
+		undos.push(todo);
+		redos.clear();
 	}
 
 	@Override public void undo() {
-		Command latestCmd = undoStack.pop() ;
+		Command latestCmd = undos.pop() ;
 		if(latestCmd==null) return;
-        redoStack.push(latestCmd);
+        redos.push(latestCmd);
         reset.execute();
-        undoStack.forEachFifo(cmd->cmd.execute());
+        undos.forEachFifo(cmd->cmd.execute());
 	}
 
 	@Override public void redo() {
-		Command latestCmd = redoStack.pop() ;
+		Command latestCmd = redos.pop() ;
 		if(latestCmd==null) return;
 		latestCmd.execute();
-        undoStack.push(latestCmd); 
+        undos.push(latestCmd); 
 	}
 	
 }

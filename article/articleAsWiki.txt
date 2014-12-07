@@ -1,47 +1,85 @@
-La dernière fois je vous avez parlé de [quelques patterns d'implémentation avec les enums java|http://blog.zenika.com/index.php?post/2014/06/11/Quelques-patterns-d-implementation-avec-les-enums-java||quelques patterns d'implémentation avec les enums java] et en particulier de l'application des enums au Domain Driven Design grâce à l'inversion de dépendance. Continuons notre révision des bases avec le pattern Command; on va un peu plus loin en analysant en particulier 3 variations permettant d'implémenter l'undo/redo.
+Pattern Command: Undo, variations Compensation/Replay/Memento
 
 
 
 
-!!!Généralités
+La dernière fois je vous avez parlé de [quelques patterns d'implémentation avec les enums java|http://blog.zenika.com/index.php?post/2014/06/11/Quelques-patterns-d-implementation-avec-les-enums-java||quelques patterns d'implémentation avec les enums java] et en particulier de l'application des enums au Domain Driven Design grâce à l'inversion de dépendance. Aujourd'hui nous allons parler d'un design pattern classique, le pattern Command. Après un rappel de sa structure et de ses utilisations, nous irons un peu plus loin en analysant en particulier 3 variations permettant d'implémenter l'undo/redo.
+
+
+
+
+!!!Rappels sur le pattern Command
+Dans le langage commun, un pattern désigne un motif répétitif, tel ceux qui décorent les tapis et le carrelage. En programmation, un pattern désigne une solution fréquente à un problème récurrent. Il existe plusieurs types de patterns: 
+* Les analysis patterns modélisent des domaines métiers particuliers (mesures et observations, comptabilité, ..)
+* Les design patterns offrent des solutions à des problèmes de conceptions généraux (dans le monde objet: structure, création, comportement et interactions des objets) 
+* Les implementation patterns recensent les techniques d'implémentation propres à chaque langage (dans l'article précédent, l'utilisation des enums polymorphiques de Java)
+Ainsi le pattern Command est un design pattern, utilisable dans tout langage orienté objet. 
+
+Le livre de loin le plus connu sur les design patterns est [Design Patterns: Elements of Reusable Object-Oriented Software|http://www.amazon.com/Design-Patterns-Elements-Reusable-Object-Oriented/dp/0201633612]. On l'appelle souvent le GOF, abbréviation de Gang of Four qui désigne ses auteurs.
 Selon le GOF, l'intention du pattern Command, est d'''encapsuler une requête comme un objet, autorisant ainsi le paramétrage des clients par différentes requêtes, file d'attente et récapitulatifs de requêtes, et de plus permettant la révision des opérations''. Le GOF fait ici allusion à deux utilisations des commandes: découpler la création d'une requête de son exécution, et implémenter l'undo. Ce dernier point est le sujet principal de ce post.
 
-La structure est la suivante:
+La structure du pattern Commande telle qu'expliquée dans le GOF est la suivante:
 ((/public/_Claisse/.commande-1-general_m.jpg|commande-1-general.png))
 
-Lors de l'instanciation d'une ConcreteCommand par le Client, celle-ci capture l'état permettant de d'invoquer une action paramétrée. Lorsque l'Invocator déclenche une Command, la ConcreteCommand invoque le Receptor en passant l'état stocké en paramètre. Ce pattern permet de découpler l'instanciation d'un traitement de son exécution. On introduit souvent ce degré d'abstraction lorsque les lieux d'instanciation et d'exécution d'un traitement sont éloignés, dans l'espace ou dans le temps. 
+Expliquons les rôles intervenant dans ce pattern:
+-Command: l'abstraction d'une action, qui permet de découpler la création de l'action de son exécution
+-Invocator: celui qui déclenche l'exécution des commandes (ex: un item d'un menu d'IHM)
+-ConcreteCommand: un type de commande particulier
+-Client: l'instanciateur de ConcreteCommand. Il capture les paramètres passés au constructeur de ConcreteCommand. Attention, le terme Client n'est pas à prendre au sens remoting ni au sens IHM.
+-Receptor: la cible d'un type de commande particulier (ex: un graphique pour une commande "drawLine"). Attention, le terme Receptor n'est pas à prendre au sens remoting.
+
+Ils interagissent de la façon suivante:
+* Le Client capture dans le système les valeurs permettant de paramétrer une ConcreteCommand . Il l'instancie en lui passant ces paramètres. 
+* L'Invocator déclenche une Command, 
+* La ConcreteCommand exécute une action impactant le Receptor, en utilisant les paramètres que son constructeur a capturés. 
+On voit que ce pattern permet bien de découpler l'instanciation d'un traitement de son exécution. C'est pour cela qu'on introduit souvent ce degré d'abstraction lorsque les lieux d'instanciation et d'exécution d'un traitement sont éloignés, dans l'espace ou dans le temps. 
+
+!!!Découplage modulaire
+Sans aller jusqu’à la séparation physique, la séparation entre modules (même co-localisés) est une motivation suffisante; le pattern Command permet :
+* De garder des modules faiblement couplés: le module d’exécution a juste à connaitre l’interface de Command sans se soucier de la création de nouvelles commandes. 
+* En particulier, d'ajouter de nouveaux types de commandes (de nouvelles ConcreteCommand) dans le module de création, sans modifier le module d'exécution. Cette approche correspond au principe [open-close|https://docs.google.com/a/cleancoder.com/file/d/0BwhCYaYDn8EgN2M5MTkwM2EtNWFkZC00ZTI3LWFjZTUtNTFhZGZiYmUzODc1/edit?hl=en] de Robert Martin (voir aussi [les autres principes SOLID du même auteur|http://www.butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod])
 
 !!!Découplage spatial ou temporel avec le pattern Command
-Le problème à résoudre est que le point de création de la commande, qui est le seul à connaître les données nécessaires à l'exécution d'un traitement, peut être différent du point d'exécution de la commande, qui est le seul à connaître le contexte(scope ou ressources techniques) nécessaires à son exécution.
+Le problème à résoudre est ici que le point de création de la commande, qui est le seul à connaître les données nécessaires à l'exécution d'un traitement, peut être différent du point d'exécution de la commande, qui est le seul à connaître le contexte (portée/scope d'une séquence de commandes, et/ou ressources techniques) nécessaires à son exécution.
 
 !!Découplage spatial: commande remote
-Dans le cas spatial, la commande est typiquement créée dans un client et exécutée dans un serveur (les rôles du pattern Command sont indiqués sous forme de stéréotypes UML quand il diffèrent des types propres à la variation Remote Command):
+Dans le cas spatial, la commande est typiquement créée localement et exécutée sur un serveur distant/remote (les rôles du pattern Command sont indiqués sous forme de stéréotypes UML quand il diffèrent des types propres à la variation Remote Command):
 ((/public/_Claisse/.commande-2-remoting_m.jpg|commande-2-remoting.png|C))
 
+La cinématique de la création d'une commande côté local et de son exécution côté distant est la suivante:
+* Le Client (attention, pas au sens client-serveur) instancie la ConcreteCommand en lui passant les paramètres propres à une opération particulière
+* Le constructeur de la ConcreteCommand capture ces paramètres
+* Côté local, le LocalInvocator (ex: un client-proxy EJB) déclenche l'exécution de la commande en l'envoyant au RemoteInvocator distant (sérialisation/remoting)
+* Côté serveur, la commande est reçue par le RemoteInvocator (ex: un server-proxy EJB)
+* Le RemoteInvocator instancie un ConcreteExecutionEnvironment, en passant au constructeur de ce dernier les ressources techniques nécessaires (EntityManager, ...). Le RemoteInvocator peut par exemple être un EJB @Remote.
+* Le ConcreteExecutionEnvironment construit les récepteurs concrets (DAO, ...) en utilisant les ressources techniques fournies par le RemoteInvocator (EntityManager, ...)
+* Le RemoteInvocator invoque la méthode execute de la commande en lui passant cette instance de ConcreteExecutionEnvironment
+* La méthode execute de la commande concrète invoque un ou plusieurs récepteurs abstraits (ex: Repository). Pour ce faire, elle récupère les Receptors cibles de la commande dans l'ExecutionEnvironment (ex: executionEnvironment.getRepository() )
 
-* Le constructeur de la commande concrète capture les données propres à une transaction client. 
-* La méthode execute de la commande concrète invoque un ou plusieurs récepteurs abstraits (ex: Repository). 
-* Pour ce faire, elle récupère les récepteurs abstraits dans l'environment d'exécution (abstrait lui aussi, ex: ExecutionEnvironment.getRepository)
-* Côté serveur, la commande est reçue par le RemoteInvocator
-* Les récepteurs concrets (ex: DAO implements Repository), et l'environnement d'exécution concret, sont implémentés côté serveur
-* Le RemoteInvocator instancie un ConcreteExecutionEnvironment, en passant à son constructeur les ressources techniques nécessaires (EntityManager, ...). Le RemoteInvocator peut par exemple être un EJB @Remote.
-* Le ConcreteExecutionEnvironment construit et agrège les récepteurs concrets (DAO, ...) en utilisant les ressources fournies par le RemoteInvocator (EntityManager, ...)
-* Le RemoteInvocator invoque la méthode execute de la commande en passant le ConcreteExecutionEnvironment
+
 
 !!Découplage temporel: l'undo
-Dans le cas temporel, le problème est différent: la commande peut être exécutée tout de suite, mais elle doit pouvoir être annulée ou rejouée à un instant ultérieur et indéfini. Comme le dit le GOF, ''un objet Commande peut avoir une durée de vie indépendante de la requête originelle''. Il est donc nécessaire qu'un contexte maintienne une référence vers la commande exécutée. Dans la suite on nomme ce contexte ''Conversation''. La conversation mémorise les commandes exécutées et déclenche l'undo/redo.
+Dans le cas temporel, le problème est différent: la commande peut être exécutée tout de suite, mais elle doit pouvoir être annulée ou rejouée à un instant ultérieur et indéfini. Comme le dit le GOF, ''un objet Commande peut avoir une durée de vie indépendante de la requête originelle''. Il est donc nécessaire qu'un contexte maintienne une référence vers la commande exécutée. Dans la suite on nomme ce contexte ''Conversation''. 
+Ce découplage temporel peut être utilisé de plusieurs façons:
+* Introduire un niveau d’asynchronisme (léger différé) entre la création de la commande et son exécution
+* Rejouer la commande ou son inverse (déclenché par la conversation)
+Dans le cas qui nous intéresse ici, la conversation mémorise les commandes exécutées et déclenche l'undo/redo. Chacune des commandes stockée par la conversation continue à contenir les paramètres spécifiques à une exécution particulière, qui avaient étés capturés lors de l'instanciation de la commande.
 Ce type de commande est typiquement exécutée dans le même environnement que celui où la commande a été instanciée, et la méthode execute n'a donc pas besoin d'un paramétre ExecutionEnvironnement (les ressources nécessaires à l'exécution peuvent être passées dès l'instanciation).
 
-L'undo par commande a la structure suivante (les rôles du pattern Command sont indiqués sous forme de stéréotypes UML quand il diffèrent des types propres à la variation Undo Command):
+L'undo par commande a la structure suivante (les rôles du pattern Command sont indiqués sous forme de stéréotypes UML quand il diffèrent des types propres à la variation Undo Command - en UML on devrait utiliser une « collaboration paramétrée » mais par simplicité on utilise ici de simples stéréotypes):
 ((/public/_Claisse/.commande-3-undo_m.jpg|commande-3-undo.png|C))
 
-!!Cas spatial et temporel-------
+!!Cas spatial et temporel
 Il est évidemment possible de cumuler les deux difficultés, auquel cas le serveur devra à la fois fournir un ExecutionEnvironment, et maintenir une pile des commandes déjà exécutées (un EJB Stateful permet par exemple de remplir ces deux fonctionnalités). Puisque ce post concerne l'undo, on simplifiera cependant en supposant que les commandes sont locales (intra-JVM, sans remoting)
 
-!!!L'undo
+!!!Implémentations de l'undo avec le pattern Command, tests et variations
 Venons-en au coeur du sujet: quelles sont les implémentation possibles? Laquelle choisir pour un type de commande particulier?
 
-La fonctionnalité d'undo/redo est fréquemment demandée pour une IHM car l'être humain se trompe. Elle est souvent lié à une action utilisateur Ctrl+Z/Ctrl+Y. Elle n'est cependant pas triviale à implémenter, car les implémentations possibles dépendent du type de commande (on donne des exemples plus loin). On propose ici trois variations du pattern, plus ou moins adaptées selon le type de commande. 
+La fonctionnalité d'undo/redo est fréquemment demandée pour une IHM car l'être humain se trompe. Elle est souvent lié à une action utilisateur Ctrl+Z/Ctrl+Y. Elle n'est cependant pas triviale à implémenter, car les implémentations possibles dépendent du type de commande (comme on le verra dans la partie ''Critères de choix d'une variation''). 
+On propose ici trois variations du pattern, plus ou moins adaptées selon le type de commande:
+* Compensation: pour chaque commande, on définit une commande inverse appelée compensation
+* Memento: lors de chaque exécution de commande, on mémorise l'état du système; annuler une commande consiste alors à revenir à l'état précédent
+* Replay: pour annuler la dernière commande, on commence par repositionner le système dans l'état initial (reset), puis on ré-exécute toutes les commandes sauf la dernière
 
 Le code est [disponible sur Github|https://github.com/vandekeiser/cmd-pattern||disponible sur Github]. Il nécessite java 8.
 Le projet contient un framework d'undo par commandes. Les tests junit implémentent la commande ''Typing'' de saisie d'un message sur un affichage (''Display''). Il comprend une même suite de tests appliquée aux 3 variations.
@@ -69,14 +107,52 @@ public interface Conversation<C extends Command> {
 	void redo();
 }
 ///
-Le nom Conversation souligne le fait qu'il arrive souvent que le résultat d'une suite de commandes soit committé atomiquement, ce qui correspond à un scope conversation (on pourrait implémenter cette fonctionnalité avec Seam/CDI ou Spring Web Flow; ici on se contente d'instancier une conversation au début de chaque test). 
-La conversation est identifiée à l'Invocator (du pattern Command du GOF), qui a le double rôle de mémoriser et de déclencher les commandes. Ici, c'est le même Client qui instancie les commandes concrètes et qui demande à l'Invocator de les déclencher. Le type parameter C est utilisé pour représenter les spécificités des trois variations d'undo.
+Le nom Conversation souligne le fait qu'il arrive souvent que le résultat d'une suite de commandes soit committé atomiquement, ce qui correspond à un scope conversation. 
+La conversation est identifiée à l'Invocator (du pattern Command du GOF), qui a le double rôle de mémoriser et de déclencher les commandes. Ici, c'est le même Client qui instancie les commandes concrètes et qui demande à l'Invocator de les déclencher. 
+Notons que l'interface Conversation est générique: elle porte un ''type parameter'' __C extends Command__. Le but est d'avoir une seule interface Conversation commune aux 3 variations d'undo, tout en permettant l’utilisation par ses implémentations des 3 déclinaisons de Command que nous allons présenter.
 
 !!Les tests exécutés pour toutes les variations
-Pour s'assurer que les 3 variations sont fonctionnellement équivalentes, on écrit les tests dans une classe abstraite CommandUndoTest_Typing. 
-Les tests utilisent une commande TypeString qui représente la saisie d'un String dans un Display.
+Les tests utilisent une commande TypeString qui représente la saisie d'un String dans un Display (les interfaces CompensableCommand et MementoableCommand sont expliquées dans les parties sur les variations correspondantes)
+///[java]
+public class TypeString implements CompensableCommand, MementoableCommand {
 
-CommandUndoTest_Typing commence par les cas triviaux et va jusqu'à une conversation complexe:
+	private final Display display;
+	private final String stringToType;
+	
+	public TypeString(Display display, String stringToType) {
+		this.display = display;
+		this.stringToType = stringToType;
+	}
+
+	@Override public void execute() {
+		display.append(stringToType);
+	}
+
+        [...] 	
+}
+///
+Le code passé sous silence pour l'instant [...] est spécifique à une des 3 variations
+
+Le ''receptor'' (cf. partie ''Rappels sur le pattern Command'') Display est la cible de la commande concrète Typing:
+///[java]
+public class Display {
+
+	private final LinkedList<String> displayElements = new LinkedList<>();
+	
+	public void append(String stringToAppend) {
+		displayElements.addLast(stringToAppend);
+	}
+
+	public String displayed() {
+		return displayElements.stream().collect(Collectors.joining());
+	}
+
+        [...]
+}
+///
+Le code passé sous silence [...] est spécifique à une des 3 variations
+
+Pour s'assurer que les 3 variations sont fonctionnellement équivalentes, on écrit les tests dans une classe abstraite CommandUndoTest_Typing. Les tests commencent par les cas triviaux et vont jusqu'à une conversation complexe:
 ///[java]
        /**
 	 * Basic undo
@@ -472,6 +548,15 @@ public class CompensationConversation extends AbstractConversation<CompensableCo
 Dans la variation Compensation, les deux ''type parameters'' sont identiques (__S__=__C__=__CompensableCommand__ dans __AbstractConversation<C,S>__), puisque l'état mémorisé est constitué de commandes. En effet, la compensation utilise les commandes déjà exécutées pour les compenser (undo) ou les réexécuter (redo). 
 
 A la fin d'exec(), on vide la stack de redo: les commandes undoées qui précèdent l'exécution d'une commande sont complètement effacées de la mémoire. La raison de ce choix est de se conformer aux conventions de toutes les IHM offrant un undo/redo (principe de moindre surprise).  
+
+Il est évidemment nécessaire dans cette variation que les commandes utilisées soient compensable; pour la commande de test TypeString, cette fonctionnalité se traduit par le fait que TypeString implémente CompensableCommand et non pas simplement Command:
+///[java]
+public class TypeString implements CompensableCommand {
+        @Override public void compensate() {
+                display.unappend();
+        }
+}
+///
 
 !!Variation: Undo par Replay
 Il est parfois difficile de trouver une action compensatrice. Dans ce cas si on a invoqué N commandes, une  implémentation alternative de l'undo est de réinitialiser l'état à zéro, puis de rejouer les N-1 premières commandes. Le redo consiste ensuite à rejouer la Nième commande.

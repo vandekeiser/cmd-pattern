@@ -9,24 +9,24 @@ public class MementoConversation extends AbstractConversation<MementoableCommand
 		todo.execute();
 		Memento after = todo.takeSnapshot();
 		
-		undoStack.push(new BeforeAfter(before, after));
-		redoStack.clear();
+		undos.push(new BeforeAfter(before, after));
+		redos.clear();
 	}
 
 	@Override public void undo() {
-		BeforeAfter latestMemento = undoStack.pop();
+		BeforeAfter latestMemento = undos.pop();
 		if(latestMemento==null) return;
 		Memento latestBefore = latestMemento.before;
 		latestBefore.restore();
-		redoStack.push(latestMemento);
+		redos.push(latestMemento);
 	}
 
 	@Override public void redo() {
-		BeforeAfter latestMemento = redoStack.pop();
+		BeforeAfter latestMemento = redos.pop();
 		if(latestMemento==null) return; 
 		Memento latestAfter = latestMemento.after;
 		latestAfter.restore();
-		undoStack.push(latestMemento);
+		undos.push(latestMemento);
 	}
 	
 }

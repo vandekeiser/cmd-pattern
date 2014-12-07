@@ -8,22 +8,22 @@ public class CompensationConversation extends AbstractConversation<CompensableCo
 
 	@Override public void exec(CompensableCommand todo) {
 		todo.execute();
-		undoStack.push(todo);
-		redoStack.clear();
+		undos.push(todo);
+		redos.clear();
 	}
 
 	@Override public void undo() {
-		CompensableCommand latestCmd = undoStack.pop();
+		CompensableCommand latestCmd = undos.pop();
 		if(latestCmd==null) return; 
 		latestCmd.compensate();
-		redoStack.push(latestCmd);
+		redos.push(latestCmd);
 	}
 
 	@Override public void redo() {
-		CompensableCommand latestCmd = redoStack.pop();
+		CompensableCommand latestCmd = redos.pop();
 		if(latestCmd==null) return; 
 		latestCmd.execute();
-		undoStack.push(latestCmd);
+		undos.push(latestCmd);
 	}
 	
 }
