@@ -1,13 +1,13 @@
 package cla.command.undo;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 
 public class Stack<T> {
 
-	//Delegate to avoid exposing too many Deque methods
-	private final Deque<T> stack = new LinkedList<>();
+	private final Deque<T> stack = new ArrayDeque<>();
 	
 	/**
 	 * @return null if stack is empty
