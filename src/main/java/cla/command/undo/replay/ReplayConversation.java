@@ -22,7 +22,7 @@ public class ReplayConversation extends AbstractConversation<Command, Command> {
 		if(latestCmd==null) return;
         redos.push(latestCmd);
         reset.execute();
-        undos.forEachFifo(cmd->cmd.execute());
+        undos.forEachFifo(Command::execute);
 	}
 
 	@Override public void redo() {
